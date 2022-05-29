@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">TaskAssignmentTest</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="empty_list">Empty</string>
+    <string name="title">Title</string>
+    <string name="cancel">cancel</string>
+    <string name="save">save</string>
+    <string name="no_end_date">No end date</string>
+    <string name="status_not_started">Not started</string>
+    <string name="status_in_progress">In progress</string>
+    <string name="status_done">Done</string>
+</resources>

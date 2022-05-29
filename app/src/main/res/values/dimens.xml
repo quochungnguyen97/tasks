@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_detail_title_horizontal">20dp</dimen>
+    <dimen name="padding_detail_vertical">10dp</dimen>
+    <dimen name="detail_icon_size">32dp</dimen>
+</resources>
