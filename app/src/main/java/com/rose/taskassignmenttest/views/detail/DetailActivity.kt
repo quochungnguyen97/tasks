@@ -6,8 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.viewmodels.DetailViewModel
-
-const val EXTRA_TASK_ID = "extra_task_id"
+import com.rose.taskassignmenttest.constants.ExtraConstants
 
 class DetailActivity : AppCompatActivity() {
     companion object {
@@ -19,7 +18,7 @@ class DetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detail)
 
         intent?.let {
-            val id = it.getIntExtra(EXTRA_TASK_ID, -1)
+            val id = it.getIntExtra(ExtraConstants.EXTRA_TASK_ID, -1)
             Log.i(TAG, "onCreate: id = $id")
             ViewModelProvider(this)[DetailViewModel::class.java].setTaskId(id)
         }

@@ -15,10 +15,9 @@ import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.viewmodels.ListViewModel
 import com.rose.taskassignmenttest.viewmodels.fakers.FakeTaskDao
+import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.views.detail.DetailActivity
-import com.rose.taskassignmenttest.views.detail.EXTRA_TASK_ID
 import com.rose.taskassignmenttest.views.list.items.ItemsSorter
-import com.rose.taskassignmenttest.views.list.items.ListItemFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -78,7 +77,7 @@ class TaskListFragment : Fragment(), TaskListListener {
     override fun onClick(itemId: Int) {
         context?.let {
             it.startActivity(Intent(it.applicationContext, DetailActivity::class.java).apply {
-                putExtra(EXTRA_TASK_ID, itemId)
+                putExtra(ExtraConstants.EXTRA_TASK_ID, itemId)
             })
         }
     }
