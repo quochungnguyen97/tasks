@@ -15,19 +15,35 @@ class DetailViewModel : ViewModel() {
     private val mTask = MutableLiveData<Task>()
     private val mTaskId = MutableLiveData<Int>()
 
+    private val mIsDataChanged = MutableLiveData<Boolean>()
+    private val mIsSaveSuccess = MutableLiveData<Boolean>()
+
     fun setTaskDao(taskDao: TaskDao) {
         mTaskDao = taskDao
     }
 
     fun getTask(): LiveData<Task> = mTask
+    fun getIsDataChanged(): LiveData<Boolean> = mIsDataChanged
+    fun getIsSaveSuccess(): LiveData<Boolean> = mIsSaveSuccess
+
+    fun updateTaskData(title: String, checked: Boolean) {
+        mTask.value?.let {
+            mTask.value = Task(
+                it.id, title, it.createdTime, it.modifiedTime, checked,
+                it.status, it.deadLine
+            )
+        }
+    }
 
     fun loadTask() {
-        mTaskId.value?.let { taskId ->
-            if (taskId != -1) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    mTaskDao.getTask(taskId)?.let { task ->
-                        CoroutineScope(Dispatchers.Main).launch {
-                            mTask.value = task
+        if (mTask.value == null) {
+            mTaskId.value?.let { taskId ->
+                if (taskId != -1) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        mTaskDao.getTask(taskId)?.let { task ->
+                            CoroutineScope(Dispatchers.Main).launch {
+                                mTask.value = task
+                            }
                         }
                     }
                 }
@@ -37,5 +53,19 @@ class DetailViewModel : ViewModel() {
 
     fun setTaskId(taskId: Int) {
         mTaskId.value = taskId
+    }
+
+    fun saveTask() {
+        mTask.value?.let {
+            mTaskDao.updateTask(
+                Task(
+                    it.id, it.title, it.createdTime, System.currentTimeMillis(),
+                    it.completed, it.status, it . deadLine
+                )
+            )
+            mIsSaveSuccess.value = true
+        } ?: run {
+            mIsSaveSuccess.value = false
+        }
     }
 }

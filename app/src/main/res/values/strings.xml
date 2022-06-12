@@ -10,4 +10,6 @@
     <string name="status_not_started">Not started</string>
     <string name="status_in_progress">In progress</string>
     <string name="status_done">Done</string>
+    <string name="task_saved">Task saved</string>
+    <string name="failed_to_save">Failed to save</string>
 </resources>

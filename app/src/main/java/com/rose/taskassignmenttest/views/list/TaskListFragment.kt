@@ -58,6 +58,11 @@ class TaskListFragment : Fragment(), TaskListListener {
         return root
     }
 
+    override fun onResume() {
+        super.onResume()
+        mListViewModel.loadAllTasks()
+    }
+
     private fun updateTasks(tasks: MutableList<Task>) {
         Log.i(TAG, "updateTasks: ")
         context?.let {

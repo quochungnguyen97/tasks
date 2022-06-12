@@ -1,19 +1,14 @@
 package com.rose.taskassignmenttest.views.detail
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.*
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
-import com.rose.taskassignmenttest.data.STATUS_IN_PROGRESS
-import com.rose.taskassignmenttest.data.STATUS_NOT_STARTED
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.utils.TaskDataUtils
 import com.rose.taskassignmenttest.utils.TimeUtils
@@ -42,28 +37,55 @@ class DetailFragment : Fragment() {
         mStatusText = root.findViewById(R.id.detail_status_text)
         mCreateTimeText = root.findViewById(R.id.detail_create_text)
 
-        mViewModel = ViewModelProvider(requireActivity())[DetailViewModel::class.java]
-        mViewModel.setTaskDao(FakeTaskDao())
-        mViewModel.getTask().observe(requireActivity()) { task -> updateTask(task) }
+        activity?.let {
+            mViewModel = ViewModelProvider(it)[DetailViewModel::class.java]
+            mViewModel.setTaskDao(FakeTaskDao())
+            mViewModel.getTask().observe(it) { task -> updateTask(task) }
+            mViewModel.getIsSaveSuccess().observe(it) { isSaved -> onTaskSaved(isSaved) }
 
-        mViewModel.loadTask()
+            mViewModel.loadTask()
+            root?.let { view ->
+                view.findViewById<Button>(R.id.detail_save_btn)
+                    .setOnClickListener {
+                        updateTitleAndChecked()
+                        mViewModel.saveTask()
+                    }
+            }
+        }
 
         return root
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i(TAG, "onDestroy: ")
+        updateTitleAndChecked()
+    }
+
+    private fun updateTitleAndChecked() {
+        mViewModel.updateTaskData(mTitleText.text.toString(), mCheck.isChecked)
     }
 
     private fun updateTask(task: Task) {
         Log.i(TAG, "updateTask: ")
         context?.let {
             mTitleText.setText(task.title)
+            mTitleText.setSelection(task.title.length)
             mCheck.isChecked = task.completed
             mDeadlineText.text = if (task.deadLine == -1L) it.getString(R.string.no_end_date)
             else TimeUtils.getDateTime(task.deadLine)
             mStatusText.text = TaskDataUtils.getStatusText(it, task.status)
             mCreateTimeText.text = TimeUtils.getDateTime(task.createdTime)
+        }
+    }
+
+    private fun onTaskSaved(isSaved: Boolean) {
+        activity?.let {
+            Toast.makeText(
+                it, it.getString(if (isSaved) R.string.task_saved else R.string.failed_to_save),
+                Toast.LENGTH_SHORT
+            ).show()
+            it.finish()
         }
     }
 
