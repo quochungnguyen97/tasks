@@ -2,6 +2,7 @@ package com.rose.taskassignmenttest.viewmodels.fakers
 
 import android.content.Context
 import com.rose.taskassignmenttest.data.STATUS_DONE
+import com.rose.taskassignmenttest.data.STATUS_IN_PROGRESS
 import com.rose.taskassignmenttest.data.STATUS_NOT_STARTED
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
@@ -13,7 +14,7 @@ class FakeTaskDao : TaskDao {
             add(
                 Task(
                     1, "Go shopping", System.currentTimeMillis(), System.currentTimeMillis(),
-                    false, STATUS_NOT_STARTED, -1
+                    false, STATUS_IN_PROGRESS, -1
                 )
             )
             add(

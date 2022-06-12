@@ -2,14 +2,19 @@
     <string name="app_name">TaskAssignmentTest</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    // List
     <string name="empty_list">Empty</string>
+
+    // Detail
     <string name="title">Title</string>
-    <string name="cancel">cancel</string>
-    <string name="save">save</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
     <string name="no_end_date">No end date</string>
     <string name="status_not_started">Not started</string>
     <string name="status_in_progress">In progress</string>
     <string name="status_done">Done</string>
     <string name="task_saved">Task saved</string>
     <string name="failed_to_save">Failed to save</string>
+    <string name="created_time">Created time: %s</string>
+    <string name="last_modified_time">Last modified time: %s</string>
 </resources>

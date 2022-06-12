@@ -22,7 +22,9 @@ class DetailFragment : Fragment() {
     private lateinit var mCheck: CheckBox
     private lateinit var mDeadlineText: TextView
     private lateinit var mStatusText: TextView
+    private lateinit var mStatusContainer: View
     private lateinit var mCreateTimeText: TextView
+    private lateinit var mModifiedTimeText: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,7 +37,9 @@ class DetailFragment : Fragment() {
         mCheck = root.findViewById(R.id.detail_check)
         mDeadlineText = root.findViewById(R.id.detail_deadline)
         mStatusText = root.findViewById(R.id.detail_status_text)
+        mStatusContainer = root.findViewById(R.id.detail_status_container)
         mCreateTimeText = root.findViewById(R.id.detail_create_text)
+        mModifiedTimeText = root.findViewById(R.id.detail_modified_text)
 
         activity?.let {
             mViewModel = ViewModelProvider(it)[DetailViewModel::class.java]
@@ -58,7 +62,6 @@ class DetailFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.i(TAG, "onDestroy: ")
         updateTitleAndChecked()
     }
 
@@ -67,7 +70,6 @@ class DetailFragment : Fragment() {
     }
 
     private fun updateTask(task: Task) {
-        Log.i(TAG, "updateTask: ")
         context?.let {
             mTitleText.setText(task.title)
             mTitleText.setSelection(task.title.length)
@@ -75,7 +77,9 @@ class DetailFragment : Fragment() {
             mDeadlineText.text = if (task.deadLine == -1L) it.getString(R.string.no_end_date)
             else TimeUtils.getDateTime(task.deadLine)
             mStatusText.text = TaskDataUtils.getStatusText(it, task.status)
-            mCreateTimeText.text = TimeUtils.getDateTime(task.createdTime)
+            mStatusContainer.setBackgroundResource(TaskDataUtils.getStatusContainerBG(task.status))
+            mCreateTimeText.text = it.getString(R.string.created_time, TimeUtils.getDateTime(task.createdTime))
+            mModifiedTimeText.text = it.getString(R.string.last_modified_time, TimeUtils.getDateTime(task.modifiedTime))
         }
     }
 
