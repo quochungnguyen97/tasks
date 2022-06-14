@@ -14,5 +14,8 @@
 
     <color name="status_text_color">#F0F0F0</color>
 
+    <color name="main_text_color">#010101</color>
+    <color name="sub_text_color">#909090</color>
+
     <color name="transparent">#00FFFFFF</color>
 </resources>

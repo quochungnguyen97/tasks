@@ -51,6 +51,7 @@
                 android:id="@+id/detail_deadline"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:textColor="@color/main_text_color"
                 app:layout_constraintBottom_toBottomOf="@id/deadline_icon"
                 app:layout_constraintEnd_toEndOf="@id/detail_title"
                 app:layout_constraintStart_toStartOf="@+id/detail_title"
@@ -89,6 +90,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:textColor="@color/sub_text_color"
+                android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="@id/detail_title"
                 app:layout_constraintTop_toBottomOf="@id/detail_status_container" />
 
@@ -97,6 +100,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:textColor="@color/sub_text_color"
+                android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="@id/detail_title"
                 app:layout_constraintTop_toBottomOf="@+id/detail_create_text"/>
 
