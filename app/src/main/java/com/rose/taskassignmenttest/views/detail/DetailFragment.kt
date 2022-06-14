@@ -40,6 +40,7 @@ class DetailFragment : Fragment() {
         mStatusContainer = root.findViewById(R.id.detail_status_container)
         mCreateTimeText = root.findViewById(R.id.detail_create_text)
         mModifiedTimeText = root.findViewById(R.id.detail_modified_text)
+        val deadlineContainer: View = root.findViewById(R.id.detail_deadline_container)
 
         activity?.let {
             mViewModel = ViewModelProvider(it)[DetailViewModel::class.java]
@@ -55,6 +56,11 @@ class DetailFragment : Fragment() {
                         mViewModel.saveTask()
                     }
             }
+        }
+
+        mStatusContainer.setOnClickListener {
+            val selectDialog = StatusSelectDialog()
+            selectDialog.show(requireActivity().supportFragmentManager, "StatusSelectDialog")
         }
 
         return root

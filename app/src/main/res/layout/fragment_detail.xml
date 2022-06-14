@@ -47,15 +47,24 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/detail_check" />
 
-            <TextView
-                android:id="@+id/detail_deadline"
+            <LinearLayout
+                android:id="@+id/detail_deadline_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/main_text_color"
+                android:background="?attr/selectableItemBackground"
+                android:foreground="@color/transparent"
+                android:clickable="true"
+                android:paddingVertical="5dp"
                 app:layout_constraintBottom_toBottomOf="@id/deadline_icon"
                 app:layout_constraintEnd_toEndOf="@id/detail_title"
                 app:layout_constraintStart_toStartOf="@+id/detail_title"
-                app:layout_constraintTop_toTopOf="@id/deadline_icon" />
+                app:layout_constraintTop_toTopOf="@id/deadline_icon">
+                <TextView
+                    android:id="@+id/detail_deadline"
+                    android:textColor="@color/main_text_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/status_icon"
@@ -73,6 +82,8 @@
                 android:paddingHorizontal="7dp"
                 android:paddingVertical="5dp"
                 android:background="@drawable/background_status_not_started"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
                 app:layout_constraintBottom_toBottomOf="@id/status_icon"
                 app:layout_constraintStart_toStartOf="@id/detail_title"
                 app:layout_constraintTop_toTopOf="@id/status_icon">

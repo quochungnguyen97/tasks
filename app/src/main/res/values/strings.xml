@@ -17,4 +17,5 @@
     <string name="failed_to_save">Failed to save</string>
     <string name="created_time">Created time: %s</string>
     <string name="last_modified_time">Last modified time: %s</string>
+    <string name="select_status">Select status</string>
 </resources>

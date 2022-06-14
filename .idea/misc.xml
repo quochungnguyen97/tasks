@@ -7,12 +7,14 @@
         <entry key="..\:/Android/TaskAssignmentTest/app/src/main/res/drawable/background_status.xml" value="0.124" />
         <entry key="..\:/Android/TaskAssignmentTest/app/src/main/res/drawable/background_status_done.xml" value="0.116" />
         <entry key="..\:/Android/TaskAssignmentTest/app/src/main/res/drawable/background_status_in_progress.xml" value="0.116" />
+        <entry key="..\:/Android/TaskAssignmentTest/app/src/main/res/drawable/background_status_not_started.xml" value="0.19" />
         <entry key="..\:/Android/TaskAssignmentTest/app/src/main/res/layout/activity_detail.xml" value="0.33" />
         <entry key="..\:/Android/TaskAssignmentTest/app/src/main/res/layout/activity_main.xml" value="0.35260416666666666" />
+        <entry key="..\:/Android/TaskAssignmentTest/app/src/main/res/layout/dialog_status_select.xml" value="0.33" />
         <entry key="..\:/Android/TaskAssignmentTest/app/src/main/res/layout/fragment_detail.xml" value="0.33" />
         <entry key="..\:/Android/TaskAssignmentTest/app/src/main/res/layout/fragment_task_list.xml" value="0.358695652173913" />
         <entry key="..\:/Android/TaskAssignmentTest/app/src/main/res/layout/list_item_empty.xml" value="0.358695652173913" />
-        <entry key="..\:/Android/TaskAssignmentTest/app/src/main/res/layout/list_item_header.xml" value="0.22146739130434784" />
+        <entry key="..\:/Android/TaskAssignmentTest/app/src/main/res/layout/list_item_header.xml" value="0.33" />
         <entry key="..\:/Android/TaskAssignmentTest/app/src/main/res/layout/list_item_task.xml" value="0.358695652173913" />
       </map>
     </option>

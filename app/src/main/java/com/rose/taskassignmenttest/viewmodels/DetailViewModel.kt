@@ -35,6 +35,15 @@ class DetailViewModel : ViewModel() {
         }
     }
 
+    fun updateStatus(status: Int) {
+        mTask.value?.let {
+            mTask.value = Task(
+                it.id, it.title, it.createdTime, it.modifiedTime, it.completed,
+                status, it.deadLine
+            )
+        }
+    }
+
     fun loadTask() {
         if (mTask.value == null) {
             mTaskId.value?.let { taskId ->
