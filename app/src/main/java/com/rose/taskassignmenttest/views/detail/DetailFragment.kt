@@ -29,7 +29,6 @@ class DetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.i(TAG, "onCreateView: ")
         val root = inflater.inflate(R.layout.fragment_detail, container, false)
 
         mTitleText = root.findViewById(R.id.detail_title)
@@ -59,7 +58,13 @@ class DetailFragment : Fragment() {
 
         statusContainer.setOnClickListener {
             val selectDialog = StatusSelectDialog()
-            selectDialog.show(requireActivity().supportFragmentManager, "StatusSelectDialog")
+
+            val locationWindow = intArrayOf(-1, -1)
+            mStatusTagView.getLocationInWindow(locationWindow)
+
+            selectDialog.setPosition(locationWindow[0] - mStatusTagView.width / 2,
+                locationWindow[1] - mStatusTagView.height / 2)
+            selectDialog.show(requireActivity().supportFragmentManager, StatusSelectDialog.TAG)
         }
 
         return root
