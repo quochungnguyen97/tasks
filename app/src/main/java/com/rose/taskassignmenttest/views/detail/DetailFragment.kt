@@ -10,10 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.data.Task
-import com.rose.taskassignmenttest.utils.TaskDataUtils
 import com.rose.taskassignmenttest.utils.TimeUtils
 import com.rose.taskassignmenttest.viewmodels.DetailViewModel
 import com.rose.taskassignmenttest.viewmodels.fakers.FakeTaskDao
+import com.rose.taskassignmenttest.views.common.StatusTagView
 
 class DetailFragment : Fragment() {
     private lateinit var mViewModel: DetailViewModel
@@ -21,8 +21,7 @@ class DetailFragment : Fragment() {
     private lateinit var mTitleText: EditText
     private lateinit var mCheck: CheckBox
     private lateinit var mDeadlineText: TextView
-    private lateinit var mStatusText: TextView
-    private lateinit var mStatusContainer: View
+    private lateinit var mStatusTagView: StatusTagView
     private lateinit var mCreateTimeText: TextView
     private lateinit var mModifiedTimeText: TextView
 
@@ -36,11 +35,11 @@ class DetailFragment : Fragment() {
         mTitleText = root.findViewById(R.id.detail_title)
         mCheck = root.findViewById(R.id.detail_check)
         mDeadlineText = root.findViewById(R.id.detail_deadline)
-        mStatusText = root.findViewById(R.id.detail_status_text)
-        mStatusContainer = root.findViewById(R.id.detail_status_container)
+        mStatusTagView = root.findViewById(R.id.detail_status_tag)
         mCreateTimeText = root.findViewById(R.id.detail_create_text)
         mModifiedTimeText = root.findViewById(R.id.detail_modified_text)
         val deadlineContainer: View = root.findViewById(R.id.detail_deadline_container)
+        val statusContainer: View = root.findViewById(R.id.detail_status_container)
 
         activity?.let {
             mViewModel = ViewModelProvider(it)[DetailViewModel::class.java]
@@ -58,7 +57,7 @@ class DetailFragment : Fragment() {
             }
         }
 
-        mStatusContainer.setOnClickListener {
+        statusContainer.setOnClickListener {
             val selectDialog = StatusSelectDialog()
             selectDialog.show(requireActivity().supportFragmentManager, "StatusSelectDialog")
         }
@@ -82,8 +81,7 @@ class DetailFragment : Fragment() {
             mCheck.isChecked = task.completed
             mDeadlineText.text = if (task.deadLine == -1L) it.getString(R.string.no_end_date)
             else TimeUtils.getDateTime(task.deadLine)
-            mStatusText.text = TaskDataUtils.getStatusText(it, task.status)
-            mStatusContainer.setBackgroundResource(TaskDataUtils.getStatusContainerBG(task.status))
+            mStatusTagView.setStatus(task.status)
             mCreateTimeText.text = it.getString(R.string.created_time, TimeUtils.getDateTime(task.createdTime))
             mModifiedTimeText.text = it.getString(R.string.last_modified_time, TimeUtils.getDateTime(task.modifiedTime))
         }

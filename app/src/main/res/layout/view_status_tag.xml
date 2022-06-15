@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/view_status_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="7dp"
+    android:paddingVertical="5dp"
+    android:background="@drawable/background_status">
+    <TextView
+        android:id="@+id/view_status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/status_text_color"
+        android:text="@string/status_not_started"/>
+</LinearLayout>

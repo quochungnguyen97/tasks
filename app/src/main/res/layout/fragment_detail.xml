@@ -77,22 +77,22 @@
 
             <LinearLayout
                 android:id="@+id/detail_status_container"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="7dp"
-                android:paddingVertical="5dp"
-                android:background="@drawable/background_status_not_started"
-                android:foreground="?attr/selectableItemBackground"
+                android:background="?attr/selectableItemBackground"
+                android:foreground="@color/transparent"
                 android:clickable="true"
+                android:padding="5dp"
                 app:layout_constraintBottom_toBottomOf="@id/status_icon"
                 app:layout_constraintStart_toStartOf="@id/detail_title"
-                app:layout_constraintTop_toTopOf="@id/status_icon">
-                <TextView
-                    android:id="@+id/detail_status_text"
+                app:layout_constraintTop_toTopOf="@id/status_icon"
+                app:layout_constraintEnd_toEndOf="@id/detail_title"
+                android:orientation="horizontal">
+                <com.rose.taskassignmenttest.views.common.StatusTagView
+                    android:id="@+id/detail_status_tag"
+                    app:statusType="1"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/status_text_color"
-                    android:text="@string/status_not_started"/>
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
 
