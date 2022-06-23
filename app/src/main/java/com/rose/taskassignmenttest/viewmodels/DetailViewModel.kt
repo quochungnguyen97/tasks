@@ -26,23 +26,31 @@ class DetailViewModel : ViewModel() {
     fun getIsDataChanged(): LiveData<Boolean> = mIsDataChanged
     fun getIsSaveSuccess(): LiveData<Boolean> = mIsSaveSuccess
 
-    fun updateTaskData(title: String, checked: Boolean) {
+    fun updateTaskData(title: String, checked: Boolean) =
         mTask.value?.let {
             mTask.value = Task(
                 it.id, title, it.createdTime, it.modifiedTime, checked,
                 it.status, it.deadLine
             )
         }
-    }
 
-    fun updateStatus(status: Int) {
+    fun updateStatus(status: Int) =
         mTask.value?.let {
             mTask.value = Task(
                 it.id, it.title, it.createdTime, it.modifiedTime, it.completed,
                 status, it.deadLine
             )
         }
-    }
+
+
+    fun updateDeadline(timeMillis: Long) =
+        mTask.value?.let {
+            mTask.value = Task(
+                it.id, it.title, it.createdTime, it.modifiedTime, it.completed,
+                it.status, timeMillis
+            )
+        }
+
 
     fun loadTask() {
         if (mTask.value == null) {
@@ -69,7 +77,7 @@ class DetailViewModel : ViewModel() {
             mTaskDao.updateTask(
                 Task(
                     it.id, it.title, it.createdTime, System.currentTimeMillis(),
-                    it.completed, it.status, it . deadLine
+                    it.completed, it.status, it.deadLine
                 )
             )
             mIsSaveSuccess.value = true

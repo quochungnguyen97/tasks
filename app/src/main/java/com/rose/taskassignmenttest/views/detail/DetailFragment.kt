@@ -1,7 +1,8 @@
 package com.rose.taskassignmenttest.views.detail
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +15,10 @@ import com.rose.taskassignmenttest.utils.TimeUtils
 import com.rose.taskassignmenttest.viewmodels.DetailViewModel
 import com.rose.taskassignmenttest.viewmodels.fakers.FakeTaskDao
 import com.rose.taskassignmenttest.views.common.StatusTagView
+import java.util.*
 
-class DetailFragment : Fragment() {
+class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
+    DatePickerDialog.OnDateSetListener {
     private lateinit var mViewModel: DetailViewModel
 
     private lateinit var mTitleText: EditText
@@ -24,6 +27,8 @@ class DetailFragment : Fragment() {
     private lateinit var mStatusTagView: StatusTagView
     private lateinit var mCreateTimeText: TextView
     private lateinit var mModifiedTimeText: TextView
+
+    private val mDeadlineCalendar = Calendar.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,9 +67,21 @@ class DetailFragment : Fragment() {
             val locationWindow = intArrayOf(-1, -1)
             mStatusTagView.getLocationInWindow(locationWindow)
 
-            selectDialog.setPosition(locationWindow[0] - mStatusTagView.width / 2,
-                locationWindow[1] - mStatusTagView.height / 2)
+            selectDialog.setPosition(
+                locationWindow[0] - mStatusTagView.width / 2,
+                locationWindow[1] - mStatusTagView.height / 2
+            )
             selectDialog.show(requireActivity().supportFragmentManager, StatusSelectDialog.TAG)
+        }
+
+        deadlineContainer.setOnClickListener {
+            mTitleText.clearFocus()
+            val currentCalendar = Calendar.getInstance()
+            currentCalendar.timeInMillis = System.currentTimeMillis()
+            DatePickerDialog(
+                requireContext(), this, currentCalendar.get(Calendar.YEAR),
+                currentCalendar.get(Calendar.MONTH), currentCalendar.get(Calendar.DAY_OF_MONTH)
+            ).show()
         }
 
         return root
@@ -87,8 +104,10 @@ class DetailFragment : Fragment() {
             mDeadlineText.text = if (task.deadLine == -1L) it.getString(R.string.no_end_date)
             else TimeUtils.getDateTime(task.deadLine)
             mStatusTagView.setStatus(task.status)
-            mCreateTimeText.text = it.getString(R.string.created_time, TimeUtils.getDateTime(task.createdTime))
-            mModifiedTimeText.text = it.getString(R.string.last_modified_time, TimeUtils.getDateTime(task.modifiedTime))
+            mCreateTimeText.text =
+                it.getString(R.string.created_time, TimeUtils.getDateTime(task.createdTime))
+            mModifiedTimeText.text =
+                it.getString(R.string.last_modified_time, TimeUtils.getDateTime(task.modifiedTime))
         }
     }
 
@@ -106,5 +125,26 @@ class DetailFragment : Fragment() {
         @JvmStatic
         fun newInstance() = DetailFragment()
         private const val TAG = "DetailFragment"
+    }
+
+    override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
+        mDeadlineCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+        mDeadlineCalendar.set(Calendar.MINUTE, minute)
+
+        mViewModel.updateDeadline(mDeadlineCalendar.timeInMillis)
+    }
+
+    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+        mDeadlineCalendar.set(Calendar.YEAR, year)
+        mDeadlineCalendar.set(Calendar.MONTH, month)
+        mDeadlineCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+        val currentCalendar = Calendar.getInstance()
+        currentCalendar.timeInMillis = System.currentTimeMillis()
+
+        TimePickerDialog(
+            requireContext(), this, currentCalendar.get(Calendar.HOUR_OF_DAY),
+            currentCalendar.get(Calendar.MINUTE), true
+        ).show()
     }
 }

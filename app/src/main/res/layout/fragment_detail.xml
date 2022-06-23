@@ -55,6 +55,7 @@
                 android:foreground="@color/transparent"
                 android:clickable="true"
                 android:paddingVertical="5dp"
+                android:paddingHorizontal="10dp"
                 app:layout_constraintBottom_toBottomOf="@id/deadline_icon"
                 app:layout_constraintEnd_toEndOf="@id/detail_title"
                 app:layout_constraintStart_toStartOf="@+id/detail_title"
@@ -62,6 +63,7 @@
                 <TextView
                     android:id="@+id/detail_deadline"
                     android:textColor="@color/main_text_color"
+                    android:text="@string/no_end_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
