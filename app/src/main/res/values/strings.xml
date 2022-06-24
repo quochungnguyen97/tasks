@@ -18,4 +18,7 @@
     <string name="created_time">Created time: %s</string>
     <string name="last_modified_time">Last modified time: %s</string>
     <string name="select_status">Select status</string>
+    <string name="detail_dialog_message">Do you want to quit without saving changed data?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

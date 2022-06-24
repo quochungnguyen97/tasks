@@ -1,5 +1,6 @@
 package com.rose.taskassignmenttest.views.detail
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
@@ -44,12 +45,16 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         mModifiedTimeText = root.findViewById(R.id.detail_modified_text)
         val deadlineContainer: View = root.findViewById(R.id.detail_deadline_container)
         val statusContainer: View = root.findViewById(R.id.detail_status_container)
+        val cancelButton: Button = root.findViewById(R.id.detail_cancel_btn)
 
         activity?.let {
             mViewModel = ViewModelProvider(it)[DetailViewModel::class.java]
             mViewModel.setTaskDao(FakeTaskDao())
             mViewModel.getTask().observe(it) { task -> updateTask(task) }
             mViewModel.getIsSaveSuccess().observe(it) { isSaved -> onTaskSaved(isSaved) }
+            mViewModel.getIsDataChanged().observe(it) { isDataChanged ->
+                onDataChanged(isDataChanged)
+            }
 
             mViewModel.loadTask()
             root?.let { view ->
@@ -82,6 +87,11 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 requireContext(), this, currentCalendar.get(Calendar.YEAR),
                 currentCalendar.get(Calendar.MONTH), currentCalendar.get(Calendar.DAY_OF_MONTH)
             ).show()
+        }
+
+        cancelButton.setOnClickListener {
+            updateTitleAndChecked()
+            mViewModel.checkDataChanged()
         }
 
         return root
@@ -118,6 +128,20 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 Toast.LENGTH_SHORT
             ).show()
             it.finish()
+        }
+    }
+
+    private fun onDataChanged(isDataChanged: Boolean) {
+        activity?.let {
+            if (isDataChanged) {
+                AlertDialog.Builder(it).setMessage(R.string.detail_dialog_message)
+                    .setPositiveButton(R.string.yes) { _, _ -> it.finish() }
+                    .setNegativeButton(R.string.no) { dialog, _ -> dialog.dismiss() }
+                    .create()
+                    .show()
+            } else {
+                it.finish()
+            }
         }
     }
 

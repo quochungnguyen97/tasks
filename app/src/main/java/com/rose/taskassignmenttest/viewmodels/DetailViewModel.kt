@@ -72,7 +72,24 @@ class DetailViewModel : ViewModel() {
         mTaskId.value = taskId
     }
 
-    fun saveTask() {
+    fun checkDataChanged() {
+        mTask.value?.let { task ->
+            CoroutineScope(Dispatchers.IO).launch {
+                mTaskDao.getTask(task.id)?.let { loadedTask ->
+                    val isDataNotChanged = task.completed == loadedTask.completed &&
+                            task.deadLine == loadedTask.deadLine &&
+                            task.createdTime == loadedTask.createdTime &&
+                            task.status == loadedTask.status &&
+                            task.title == loadedTask.title
+                    CoroutineScope(Dispatchers.Main).launch { mIsDataChanged.value = !isDataNotChanged }
+                }
+            }
+        } ?: run {
+            mIsDataChanged.value = false
+        }
+    }
+
+    fun saveTask() =
         mTask.value?.let {
             mTaskDao.updateTask(
                 Task(
@@ -84,5 +101,4 @@ class DetailViewModel : ViewModel() {
         } ?: run {
             mIsSaveSuccess.value = false
         }
-    }
 }
