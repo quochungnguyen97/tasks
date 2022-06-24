@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.utils.TimeUtils
+import com.rose.taskassignmenttest.utils.ViewUtils
 import com.rose.taskassignmenttest.viewmodels.DetailViewModel
 import com.rose.taskassignmenttest.viewmodels.fakers.FakeTaskDao
 import com.rose.taskassignmenttest.views.common.StatusTagView
@@ -81,6 +82,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
 
         deadlineContainer.setOnClickListener {
             mTitleText.clearFocus()
+            ViewUtils.hideInputMethod(requireContext(), root)
             val currentCalendar = Calendar.getInstance()
             currentCalendar.timeInMillis = System.currentTimeMillis()
             DatePickerDialog(
