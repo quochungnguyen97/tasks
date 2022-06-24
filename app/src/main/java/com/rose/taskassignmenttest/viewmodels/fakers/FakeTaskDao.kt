@@ -52,4 +52,10 @@ class FakeTaskDao : TaskDao {
         sList.addAll(list)
         sList.add(task)
     }
+
+    override fun deleteTask(taskId: Int) {
+        val list = sList.stream().filter { t -> t.id != taskId }.toList()
+        sList.clear()
+        sList.addAll(list)
+    }
 }

@@ -1,9 +1,11 @@
 package com.rose.taskassignmenttest.views.list.hoders
 
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.views.list.TaskListListener
 import com.rose.taskassignmenttest.views.list.items.ListItem
@@ -34,6 +36,23 @@ class TaskViewHolder(itemView: View): ListViewHolder(itemView) {
         }
 
         mContainer.setOnClickListener { taskListListener.onClick(item.getItemId()) }
+
+        mContainer.setOnLongClickListener {
+            PopupMenu(it.context, it).apply {
+                setOnMenuItemClickListener { itemMenu ->
+                    when (itemMenu.itemId) {
+                        R.id.menu_delete -> {
+                            taskListListener.onDelete(item.getItemId())
+                            true
+                        }
+                        else -> false
+                    }
+                }
+                inflate(R.menu.task_list_context_menu)
+                show()
+            }
+            true
+        }
     }
 
     override fun updateTopBottom(isTop: Boolean) {

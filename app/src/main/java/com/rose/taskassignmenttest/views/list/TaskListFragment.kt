@@ -92,4 +92,6 @@ class TaskListFragment : Fragment(), TaskListListener {
             mListViewModel.checkTask(itemId, checked)
         }
     }
+
+    override fun onDelete(itemId: Int) = mListViewModel.deleteTask(itemId)
 }

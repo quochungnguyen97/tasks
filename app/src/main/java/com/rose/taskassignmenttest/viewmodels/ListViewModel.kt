@@ -27,6 +27,15 @@ class ListViewModel : ViewModel() {
         return mAllTasks
     }
 
+    fun deleteTask(taskId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            mAllTasks.value?.first { t -> t.id == taskId }.let {
+                mTaskDao.deleteTask(taskId)
+                loadAllTasks()
+            }
+        }
+    }
+
     fun checkTask(taskId: Int, checked: Boolean) {
         Log.i(TAG, "checkTask: $taskId, checked: $checked")
         CoroutineScope(Dispatchers.IO).launch {
