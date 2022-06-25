@@ -17,6 +17,7 @@ class DetailViewModel : ViewModel() {
 
     private val mIsDataChanged = MutableLiveData<Boolean>()
     private val mIsSaveSuccess = MutableLiveData<Boolean>()
+    private val mOnTitleEmptyNotified = MutableLiveData<Boolean>()
 
     fun setTaskDao(taskDao: TaskDao) {
         mTaskDao = taskDao
@@ -25,6 +26,7 @@ class DetailViewModel : ViewModel() {
     fun getTask(): LiveData<Task> = mTask
     fun getIsDataChanged(): LiveData<Boolean> = mIsDataChanged
     fun getIsSaveSuccess(): LiveData<Boolean> = mIsSaveSuccess
+    fun getOnTitleEmptyNotified(): LiveData<Boolean> = mOnTitleEmptyNotified
 
     fun updateTaskData(title: String, checked: Boolean) =
         mTask.value?.let {
@@ -96,17 +98,21 @@ class DetailViewModel : ViewModel() {
 
     fun saveTask() =
         mTask.value?.let {
-            if (it.id != -1) {
-                mTaskDao.updateTask(
-                    Task(
-                        it.id, it.title, it.createdTime, System.currentTimeMillis(),
-                        it.completed, it.status, it.deadLine
-                    )
-                )
+            if (it.title.isEmpty()) {
+                mOnTitleEmptyNotified.value = true
             } else {
-                mTaskDao.insertTask(it)
+                if (it.id != -1) {
+                    mTaskDao.updateTask(
+                        Task(
+                            it.id, it.title, it.createdTime, System.currentTimeMillis(),
+                            it.completed, it.status, it.deadLine
+                        )
+                    )
+                } else {
+                    mTaskDao.insertTask(it)
+                }
+                mIsSaveSuccess.value = true
             }
-            mIsSaveSuccess.value = true
         } ?: run {
             mIsSaveSuccess.value = false
         }

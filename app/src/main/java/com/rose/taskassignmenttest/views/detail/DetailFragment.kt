@@ -62,6 +62,13 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
             mViewModel.getIsDataChanged().observe(it) { isDataChanged ->
                 onDataChanged(isDataChanged)
             }
+            mViewModel.getOnTitleEmptyNotified().observe(it) { isNotified ->
+                if (isNotified) {
+                    Toast.makeText(it, it.getString(R.string.title_empty_notify), Toast.LENGTH_SHORT)
+                        .show()
+                    mTitleText.requestFocus()
+                }
+            }
 
             mViewModel.loadTask()
             root?.let { view ->
