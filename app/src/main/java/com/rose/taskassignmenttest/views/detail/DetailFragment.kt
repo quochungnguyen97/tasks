@@ -8,9 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
+import com.rose.taskassignmenttest.data.STATUS_DONE
+import com.rose.taskassignmenttest.data.STATUS_IN_PROGRESS
+import com.rose.taskassignmenttest.data.STATUS_NOT_STARTED
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.utils.TimeUtils
 import com.rose.taskassignmenttest.utils.ViewUtils
@@ -29,6 +33,8 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
     private lateinit var mStatusTagView: StatusTagView
     private lateinit var mCreateTimeText: TextView
     private lateinit var mModifiedTimeText: TextView
+
+    private lateinit var mStatusPopupMenu: PopupMenu
 
     private val mDeadlineCalendar = Calendar.getInstance()
 
@@ -65,19 +71,36 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                         mViewModel.saveTask()
                     }
             }
-        }
 
-        statusContainer.setOnClickListener {
-            val selectDialog = StatusSelectDialog()
+            mStatusPopupMenu = PopupMenu(requireContext(), statusContainer).apply {
+                    setOnMenuItemClickListener { menuItem ->
+                        when (menuItem.itemId) {
+                            R.id.menu_not_started -> {
+                                mViewModel.updateStatus(STATUS_NOT_STARTED)
+                                true
+                            }
+                            R.id.menu_in_progress -> {
+                                mViewModel.updateStatus(STATUS_IN_PROGRESS)
+                                true
+                            }
+                            R.id.menu_done -> {
+                                mViewModel.updateStatus(STATUS_DONE)
+                                true
+                            }
+                            else -> false
+                        }
+                    }
+                    inflate(R.menu.detail_status_popup_menu)
+                }
 
-            val locationWindow = intArrayOf(-1, -1)
-            mStatusTagView.getLocationInWindow(locationWindow)
+            statusContainer.setOnClickListener {
+                mStatusPopupMenu.show()
+            }
 
-            selectDialog.setPosition(
-                locationWindow[0] - mStatusTagView.width / 2,
-                locationWindow[1] - mStatusTagView.height / 2
-            )
-            selectDialog.show(requireActivity().supportFragmentManager, StatusSelectDialog.TAG)
+            cancelButton.setOnClickListener {
+                updateTitleAndChecked()
+                mViewModel.checkDataChanged()
+            }
         }
 
         deadlineContainer.setOnClickListener {
@@ -89,11 +112,6 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 requireContext(), this, currentCalendar.get(Calendar.YEAR),
                 currentCalendar.get(Calendar.MONTH), currentCalendar.get(Calendar.DAY_OF_MONTH)
             ).show()
-        }
-
-        cancelButton.setOnClickListener {
-            updateTitleAndChecked()
-            mViewModel.checkDataChanged()
         }
 
         return root

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/menu_not_started"
+        android:title="@string/status_not_started"
+        app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/menu_in_progress"
+        android:title="@string/status_in_progress"
+        app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/menu_done"
+        android:title="@string/status_done"
+        app:showAsAction="ifRoom" />
+
+</menu>

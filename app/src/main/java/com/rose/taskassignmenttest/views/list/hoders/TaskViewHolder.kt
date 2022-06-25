@@ -1,7 +1,6 @@
 package com.rose.taskassignmenttest.views.list.hoders
 
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
@@ -48,7 +47,7 @@ class TaskViewHolder(itemView: View): ListViewHolder(itemView) {
                         else -> false
                     }
                 }
-                inflate(R.menu.task_list_context_menu)
+                inflate(R.menu.task_list_popup_menu)
                 show()
             }
             true
