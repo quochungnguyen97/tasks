@@ -4,7 +4,8 @@ import com.rose.taskassignmenttest.data.Task
 
 interface TaskDao {
     fun getAllTasks(): MutableList<Task>
-    fun getTask(taskId: Int): Task?
+    fun getTask(taskId: Int): Task
     fun updateTask(task: Task)
+    fun insertTask(task: Task)
     fun deleteTask(taskId: Int)
 }

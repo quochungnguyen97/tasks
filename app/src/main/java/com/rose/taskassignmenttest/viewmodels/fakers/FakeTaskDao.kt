@@ -42,8 +42,8 @@ class FakeTaskDao : TaskDao {
         return ArrayList<Task>().apply { addAll(sList) }
     }
 
-    override fun getTask(taskId: Int): Task? {
-        return sList.find { t -> t.id == taskId }
+    override fun getTask(taskId: Int): Task {
+        return sList.find { t -> t.id == taskId } ?: Task.newTask()
     }
 
     override fun updateTask(task: Task) {
@@ -51,6 +51,22 @@ class FakeTaskDao : TaskDao {
         sList.clear()
         sList.addAll(list)
         sList.add(task)
+    }
+
+    override fun insertTask(task: Task) {
+        val id: Int = sList.stream().mapToInt { t -> t.id }.max().orElse(1)
+        val currentTime = System.currentTimeMillis()
+        sList.add(
+            Task(
+                id,
+                task.title,
+                currentTime,
+                currentTime,
+                task.completed,
+                task.status,
+                task.deadLine
+            )
+        )
     }
 
     override fun deleteTask(taskId: Int) {
