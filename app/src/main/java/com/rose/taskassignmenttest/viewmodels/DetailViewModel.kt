@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.rose.taskassignmenttest.data.Task
-import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
+import com.rose.taskassignmenttest.daos.TaskDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

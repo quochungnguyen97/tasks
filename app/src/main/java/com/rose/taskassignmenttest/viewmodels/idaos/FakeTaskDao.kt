@@ -1,11 +1,10 @@
-package com.rose.taskassignmenttest.viewmodels.fakers
+package com.rose.taskassignmenttest.viewmodels.idaos
 
-import android.content.Context
 import com.rose.taskassignmenttest.data.STATUS_DONE
 import com.rose.taskassignmenttest.data.STATUS_IN_PROGRESS
 import com.rose.taskassignmenttest.data.STATUS_NOT_STARTED
 import com.rose.taskassignmenttest.data.Task
-import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
+import com.rose.taskassignmenttest.daos.TaskDao
 import kotlin.streams.toList
 
 class FakeTaskDao : TaskDao {
