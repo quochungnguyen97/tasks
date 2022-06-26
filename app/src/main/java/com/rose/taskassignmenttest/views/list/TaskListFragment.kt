@@ -50,7 +50,7 @@ class TaskListFragment : Fragment(), TaskListListener {
             mRecyclerView.layoutManager = LinearLayoutManager(it)
             mRecyclerView.adapter = mListAdapter
             mListViewModel = ViewModelProvider(it).get(ListViewModel::class.java)
-            mListViewModel.setTaskDao(TaskDaoFactory.newTaskDao())
+            mListViewModel.setTaskDao(TaskDaoFactory.newTaskDao(it))
             mListViewModel.loadAllTasks()
             mListViewModel.getAllTasks().observe(it) { tasks -> updateTasks(tasks) }
         }

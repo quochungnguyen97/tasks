@@ -4,8 +4,8 @@ import com.rose.taskassignmenttest.data.STATUS_DONE
 import com.rose.taskassignmenttest.data.STATUS_IN_PROGRESS
 import com.rose.taskassignmenttest.data.STATUS_NOT_STARTED
 import com.rose.taskassignmenttest.data.Task
-import com.rose.taskassignmenttest.daos.TaskDao
-import kotlin.streams.toList
+import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
+import java.util.stream.Collectors
 
 class FakeTaskDao : TaskDao {
     companion object {
@@ -46,7 +46,7 @@ class FakeTaskDao : TaskDao {
     }
 
     override fun updateTask(task: Task) {
-        val list = sList.stream().filter { t -> t.id != task.id }.toList()
+        val list = sList.stream().filter { t -> t.id != task.id }.collect(Collectors.toList())
         sList.clear()
         sList.addAll(list)
         sList.add(task)
@@ -69,7 +69,7 @@ class FakeTaskDao : TaskDao {
     }
 
     override fun deleteTask(taskId: Int) {
-        val list = sList.stream().filter { t -> t.id != taskId }.toList()
+        val list = sList.stream().filter { t -> t.id != taskId }.collect(Collectors.toList())
         sList.clear()
         sList.addAll(list)
     }

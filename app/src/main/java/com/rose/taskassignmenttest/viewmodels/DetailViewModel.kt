@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.rose.taskassignmenttest.data.Task
-import com.rose.taskassignmenttest.daos.TaskDao
+import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -101,17 +101,21 @@ class DetailViewModel : ViewModel() {
             if (it.title.isEmpty()) {
                 mOnTitleEmptyNotified.value = true
             } else {
-                if (it.id != -1) {
-                    mTaskDao.updateTask(
-                        Task(
-                            it.id, it.title, it.createdTime, System.currentTimeMillis(),
-                            it.completed, it.status, it.deadLine
+                CoroutineScope(Dispatchers.IO).launch {
+                    if (it.id != -1) {
+                        mTaskDao.updateTask(
+                            Task(
+                                it.id, it.title, it.createdTime, System.currentTimeMillis(),
+                                it.completed, it.status, it.deadLine
+                            )
                         )
-                    )
-                } else {
-                    mTaskDao.insertTask(it)
+                    } else {
+                        mTaskDao.insertTask(it)
+                    }
+                    CoroutineScope(Dispatchers.Main).launch {
+                        mIsSaveSuccess.value = true
+                    }
                 }
-                mIsSaveSuccess.value = true
             }
         } ?: run {
             mIsSaveSuccess.value = false

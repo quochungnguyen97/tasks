@@ -1,4 +1,4 @@
-package com.rose.taskassignmenttest.daos
+package com.rose.taskassignmenttest.viewmodels.daos
 
 import com.rose.taskassignmenttest.data.Task
 

@@ -56,7 +56,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
 
         activity?.let {
             mViewModel = ViewModelProvider(it)[DetailViewModel::class.java]
-            mViewModel.setTaskDao(TaskDaoFactory.newTaskDao())
+            mViewModel.setTaskDao(TaskDaoFactory.newTaskDao(it))
             mViewModel.getTask().observe(it) { task -> updateTask(task) }
             mViewModel.getIsSaveSuccess().observe(it) { isSaved -> onTaskSaved(isSaved) }
             mViewModel.getIsDataChanged().observe(it) { isDataChanged ->
@@ -101,6 +101,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                 }
 
             statusContainer.setOnClickListener {
+                updateTitleAndChecked()
                 mStatusPopupMenu.show()
             }
 
@@ -111,6 +112,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         }
 
         deadlineContainer.setOnClickListener {
+            updateTitleAndChecked()
             mTitleText.clearFocus()
             ViewUtils.hideInputMethod(requireContext(), root)
             val currentCalendar = Calendar.getInstance()
