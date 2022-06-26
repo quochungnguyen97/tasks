@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -77,6 +78,7 @@ class TaskListFragment : Fragment(), TaskListListener {
                 CoroutineScope(Dispatchers.Main).launch { mListAdapter.notifyDataSetChanged() }
             }
         }
+        mEmptyText.isVisible = tasks.isEmpty()
     }
 
     override fun onClick(itemId: Int) {
