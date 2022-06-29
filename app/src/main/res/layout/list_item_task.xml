@@ -5,6 +5,7 @@
     android:background="?attr/selectableItemBackground"
     android:foreground="@color/transparent"
     android:clickable="true"
+    android:padding="5dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -23,6 +24,9 @@
         android:layout_height="wrap_content"
         android:textColor="@color/main_text_color"
         android:text="Title"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="3dp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/item_task_sub_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -35,6 +39,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/sub_text_color"
         android:text="sub title"
+        android:layout_marginStart="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
