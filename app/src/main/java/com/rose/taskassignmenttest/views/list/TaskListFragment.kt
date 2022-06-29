@@ -16,7 +16,6 @@ import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.viewmodels.ListViewModel
 import com.rose.taskassignmenttest.constants.ExtraConstants
-import com.rose.taskassignmenttest.viewmodels.idaos.TaskDaoFactory
 import com.rose.taskassignmenttest.views.detail.DetailActivity
 import com.rose.taskassignmenttest.views.list.items.ItemsSorter
 import kotlinx.coroutines.CoroutineScope
@@ -51,7 +50,6 @@ class TaskListFragment : Fragment(), TaskListListener {
             mRecyclerView.layoutManager = LinearLayoutManager(it)
             mRecyclerView.adapter = mListAdapter
             mListViewModel = ViewModelProvider(it).get(ListViewModel::class.java)
-            mListViewModel.setTaskDao(TaskDaoFactory.newTaskDao(it))
             mListViewModel.loadAllTasks()
             mListViewModel.getAllTasks().observe(it) { tasks -> updateTasks(tasks) }
         }

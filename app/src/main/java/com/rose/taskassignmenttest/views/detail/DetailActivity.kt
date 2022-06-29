@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.viewmodels.DetailViewModel
 import com.rose.taskassignmenttest.constants.ExtraConstants
+import com.rose.taskassignmenttest.viewmodels.idaos.TaskDaoFactory
 
 class DetailActivity : AppCompatActivity() {
     companion object {
@@ -17,10 +18,13 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
+        val viewModel = ViewModelProvider(this)[DetailViewModel::class.java]
+        viewModel.setTaskDao(TaskDaoFactory.newTaskDao(this))
+
         intent?.let {
             val id = it.getIntExtra(ExtraConstants.EXTRA_TASK_ID, -1)
             Log.i(TAG, "onCreate: id = $id")
-            ViewModelProvider(this)[DetailViewModel::class.java].setTaskId(id)
+            viewModel.setTaskId(id)
         }
 
         supportFragmentManager.beginTransaction().apply {

@@ -19,7 +19,6 @@ import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.utils.TimeUtils
 import com.rose.taskassignmenttest.utils.ViewUtils
 import com.rose.taskassignmenttest.viewmodels.DetailViewModel
-import com.rose.taskassignmenttest.viewmodels.idaos.TaskDaoFactory
 import com.rose.taskassignmenttest.views.common.StatusTagView
 import java.util.*
 
@@ -56,7 +55,6 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
 
         activity?.let {
             mViewModel = ViewModelProvider(it)[DetailViewModel::class.java]
-            mViewModel.setTaskDao(TaskDaoFactory.newTaskDao(it))
             mViewModel.getTask().observe(it) { task -> updateTask(task) }
             mViewModel.getIsSaveSuccess().observe(it) { isSaved -> onTaskSaved(isSaved) }
             mViewModel.getIsDataChanged().observe(it) { isDataChanged ->
