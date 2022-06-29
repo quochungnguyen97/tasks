@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">TaskAssignmentTest</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name">Tasks</string>
 
     // List
     <string name="empty_list">There is no task at all</string>
