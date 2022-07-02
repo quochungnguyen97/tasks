@@ -3,10 +3,8 @@ package com.rose.taskassignmenttest.views.list
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +14,8 @@ import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.viewmodels.ListViewModel
 import com.rose.taskassignmenttest.constants.ExtraConstants
+import com.rose.taskassignmenttest.constants.PreferenceConstants
+import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.views.detail.DetailActivity
 import com.rose.taskassignmenttest.views.list.items.ItemsSorter
 import kotlinx.coroutines.CoroutineScope
@@ -54,7 +54,47 @@ class TaskListFragment : Fragment(), TaskListListener {
             mListViewModel.getAllTasks().observe(it) { tasks -> updateTasks(tasks) }
         }
 
+        setHasOptionsMenu(true)
+
         return root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        activity?.let {
+            it.menuInflater.inflate(R.menu.task_list_option_menu, menu)
+            if (PreferenceUtils.getBooleanPreference(
+                    it,
+                    PreferenceConstants.PREF_KEY_HIDE_COMPLETED
+                )
+            ) {
+                menu.findItem(R.id.task_list_menu_item_hide_completed)?.isVisible = false
+            } else {
+                menu.findItem(R.id.task_list_menu_item_show_completed)?.isVisible = false
+            }
+        }
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
+            R.id.task_list_menu_item_show_completed -> {
+                updateHideCompleted(false)
+                true
+            }
+            R.id.task_list_menu_item_hide_completed -> {
+                updateHideCompleted(true)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+
+    private fun updateHideCompleted(hideCompleted: Boolean) {
+        activity?.let {
+            PreferenceUtils.setPreference(it, PreferenceConstants.PREF_KEY_HIDE_COMPLETED, hideCompleted)
+            mListViewModel.loadAllTasks()
+            it.invalidateOptionsMenu()
+        }
+
     }
 
     override fun onResume() {
@@ -63,7 +103,6 @@ class TaskListFragment : Fragment(), TaskListListener {
     }
 
     private fun updateTasks(tasks: MutableList<Task>) {
-        Log.i(TAG, "updateTasks: ")
         context?.let {
             CoroutineScope(Dispatchers.IO).launch {
                 mListAdapter.updateItems(

@@ -14,6 +14,6 @@ class TaskDaoFactory {
             else -> FakeTaskDao()
         }
 
-        fun newTaskDao(context: Context): TaskDao = newTaskDao(ROOM_DAO, context)
+        fun newTaskDao(context: Context): TaskDao = TaskDaoProxy(newTaskDao(ROOM_DAO, context), context)
     }
 }

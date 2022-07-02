@@ -23,4 +23,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="title_empty_notify">Title must not be empty!</string>
+    <string name="show_completed">Show completed</string>
+    <string name="hide_completed">Hide completed</string>
 </resources>
