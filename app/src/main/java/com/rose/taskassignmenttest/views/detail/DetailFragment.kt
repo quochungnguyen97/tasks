@@ -1,8 +1,6 @@
 package com.rose.taskassignmenttest.views.detail
 
 import android.app.AlertDialog
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,10 +18,8 @@ import com.rose.taskassignmenttest.utils.TimeUtils
 import com.rose.taskassignmenttest.utils.ViewUtils
 import com.rose.taskassignmenttest.viewmodels.DetailViewModel
 import com.rose.taskassignmenttest.views.common.StatusTagView
-import java.util.*
 
-class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
-    DatePickerDialog.OnDateSetListener {
+class DetailFragment : Fragment() {
     private lateinit var mViewModel: DetailViewModel
 
     private lateinit var mTitleText: EditText
@@ -35,7 +31,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
 
     private lateinit var mStatusPopupMenu: PopupMenu
 
-    private val mDeadlineCalendar = Calendar.getInstance()
+    private lateinit var mDeadlineTimeHandler: DateTimeHandler
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,6 +73,8 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
                     }
             }
 
+            mDeadlineTimeHandler = DateTimeHandler(it) { time -> mViewModel.updateDeadline(time) }
+
             mStatusPopupMenu = PopupMenu(requireContext(), statusContainer).apply {
                     setOnMenuItemClickListener { menuItem ->
                         when (menuItem.itemId) {
@@ -113,12 +111,7 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
             updateTitleAndChecked()
             mTitleText.clearFocus()
             ViewUtils.hideInputMethod(requireContext(), root)
-            val currentCalendar = Calendar.getInstance()
-            currentCalendar.timeInMillis = System.currentTimeMillis()
-            DatePickerDialog(
-                requireContext(), this, currentCalendar.get(Calendar.YEAR),
-                currentCalendar.get(Calendar.MONTH), currentCalendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            mDeadlineTimeHandler.showDialogs()
         }
 
         return root
@@ -176,26 +169,5 @@ class DetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener,
         @JvmStatic
         fun newInstance() = DetailFragment()
         private const val TAG = "DetailFragment"
-    }
-
-    override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        mDeadlineCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-        mDeadlineCalendar.set(Calendar.MINUTE, minute)
-
-        mViewModel.updateDeadline(mDeadlineCalendar.timeInMillis)
-    }
-
-    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        mDeadlineCalendar.set(Calendar.YEAR, year)
-        mDeadlineCalendar.set(Calendar.MONTH, month)
-        mDeadlineCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-        val currentCalendar = Calendar.getInstance()
-        currentCalendar.timeInMillis = System.currentTimeMillis()
-
-        TimePickerDialog(
-            requireContext(), this, currentCalendar.get(Calendar.HOUR_OF_DAY),
-            currentCalendar.get(Calendar.MINUTE), true
-        ).show()
     }
 }
