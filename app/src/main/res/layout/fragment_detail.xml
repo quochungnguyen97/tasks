@@ -46,7 +46,7 @@
                 android:src="@drawable/ic_baseline_date_range_24"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/detail_check"
-                app:tint="@color/main_text_color" />
+                app:tint="@color/primary_color" />
 
             <LinearLayout
                 android:id="@+id/detail_deadline_container"
@@ -75,7 +75,7 @@
                 android:layout_height="@dimen/detail_icon_size"
                 android:layout_marginTop="10dp"
                 android:src="@drawable/ic_baseline_check_24"
-                app:tint="@color/main_text_color"
+                app:tint="@color/primary_color"
                 app:layout_constraintStart_toStartOf="@id/detail_check"
                 app:layout_constraintTop_toBottomOf="@id/deadline_icon" />
 

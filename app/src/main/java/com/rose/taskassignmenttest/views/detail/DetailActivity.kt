@@ -3,6 +3,7 @@ package com.rose.taskassignmenttest.views.detail
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.viewmodels.DetailViewModel
@@ -17,6 +18,7 @@ class DetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
+        initActionBar()
 
         val viewModel = ViewModelProvider(this)[DetailViewModel::class.java]
         viewModel.setTaskDao(TaskDaoFactory.newTaskDao(this))
@@ -30,5 +32,11 @@ class DetailActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.detail_main_frame, DetailFragment.newInstance())
         }.commit()
+    }
+
+    private fun initActionBar() {
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener { finish() }
     }
 }
