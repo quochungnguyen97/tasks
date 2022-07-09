@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.rose.taskassignmenttest.constants.ExtraConstants
+import com.rose.taskassignmenttest.utils.NotiChannelManager
 import com.rose.taskassignmenttest.viewmodels.ListViewModel
 import com.rose.taskassignmenttest.viewmodels.idaos.TaskDaoFactory
 import com.rose.taskassignmenttest.views.detail.DetailActivity
@@ -30,5 +31,6 @@ class MainActivity : AppCompatActivity() {
                     putExtra(ExtraConstants.EXTRA_TASK_ID, -1)
                 })
             }
+        NotiChannelManager.createChannel(this)
     }
 }

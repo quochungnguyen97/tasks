@@ -26,4 +26,6 @@
     <string name="show_completed">Show completed</string>
     <string name="hide_completed">Hide completed</string>
     <string name="task">Task</string>
+    <string name="task_notification_channel">Task notification channel</string>
+    <string name="task_notification_desc">Channel for Task deadline</string>
 </resources>

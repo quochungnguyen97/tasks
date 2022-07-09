@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.viewmodels.DetailViewModel
@@ -24,6 +25,9 @@ class DetailActivity : AppCompatActivity() {
         viewModel.setTaskDao(TaskDaoFactory.newTaskDao(this))
 
         intent?.let {
+            if (it.getBooleanExtra(ExtraConstants.EXTRA_IS_FROM_NOTI, false)) {
+                NotificationManagerCompat.from(this).cancel(ExtraConstants.NOTI_ID)
+            }
             val id = it.getIntExtra(ExtraConstants.EXTRA_TASK_ID, -1)
             Log.i(TAG, "onCreate: id = $id")
             viewModel.setTaskId(id)

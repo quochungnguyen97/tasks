@@ -11,7 +11,7 @@ class TimeUtils {
         @JvmStatic
         fun getDateTime(timeMillis: Long): String {
             return try {
-                val sdf = SimpleDateFormat("hh:mm MM/dd/yyyy")
+                val sdf = SimpleDateFormat("hh:mm dd/MM/yyyy")
                 sdf.format(Date(timeMillis))
             } catch (e: Exception) {
                 Log.i(TAG, "getDateTime failed: " + e.localizedMessage)
