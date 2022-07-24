@@ -110,7 +110,13 @@ class DetailViewModel : ViewModel() {
                             )
                         )
                     } else {
-                        mTaskDao.insertTask(it)
+                        val currentTime = System.currentTimeMillis()
+                        mTaskDao.insertTask(
+                            Task(
+                                it.id, it.title, currentTime, currentTime,
+                                it.completed, it.status, it.deadLine
+                            )
+                        )
                     }
                     CoroutineScope(Dispatchers.Main).launch {
                         mIsSaveSuccess.value = true

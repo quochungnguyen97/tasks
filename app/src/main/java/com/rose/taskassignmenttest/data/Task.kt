@@ -17,7 +17,10 @@ data class Task(
     val deadLine: Long,
 ) {
     companion object {
-        fun newTask(): Task = Task(-1, StringUtils.EMPTY, -1, -1,
-            false, STATUS_NOT_STARTED, -1)
+        fun newTask(): Task {
+            val currentTime = System.currentTimeMillis()
+            return Task(-1, StringUtils.EMPTY, currentTime, currentTime,
+                false, STATUS_NOT_STARTED, -1)
+        }
     }
 }
