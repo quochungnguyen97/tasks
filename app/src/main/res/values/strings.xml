@@ -38,4 +38,5 @@
     <string name="empty_username_password">Username and Password should not be empty!</string>
     <string name="register">Register</string>
     <string name="account">Account</string>
+    <string name="sync">Sync</string>
 </resources>

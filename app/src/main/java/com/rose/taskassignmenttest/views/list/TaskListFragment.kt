@@ -1,10 +1,13 @@
 package com.rose.taskassignmenttest.views.list
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.TextView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,6 +33,11 @@ class TaskListFragment : Fragment(), TaskListListener {
     private lateinit var mEmptyText: TextView
 
     private lateinit var mListViewModel: ListViewModel
+
+    private val mStartLoginForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            onLoginResult(result)
+        }
 
     companion object {
         @JvmStatic
@@ -73,7 +81,9 @@ class TaskListFragment : Fragment(), TaskListListener {
             )
             if (isHideAccount) {
                 menu.findItem(R.id.task_list_menu_item_hide_completed)?.isVisible = false
+                menu.findItem(R.id.task_list_menu_item_show_completed)?.isVisible = true
             } else {
+                menu.findItem(R.id.task_list_menu_item_hide_completed)?.isVisible = true
                 menu.findItem(R.id.task_list_menu_item_show_completed)?.isVisible = false
             }
 
@@ -81,8 +91,13 @@ class TaskListFragment : Fragment(), TaskListListener {
             if (isLoggedIn) {
                 menu.findItem(R.id.task_list_menu_login)?.isVisible = false
                 menu.findItem(R.id.task_list_menu_register)?.isVisible = false
+                menu.findItem(R.id.task_list_menu_account)?.isVisible = true
+                menu.findItem(R.id.task_list_menu_sync)?.isVisible = true
             } else {
+                menu.findItem(R.id.task_list_menu_login)?.isVisible = true
+                menu.findItem(R.id.task_list_menu_register)?.isVisible = true
                 menu.findItem(R.id.task_list_menu_account)?.isVisible = false
+                menu.findItem(R.id.task_list_menu_sync)?.isVisible = false
             }
         }
         super.onPrepareOptionsMenu(menu)
@@ -102,6 +117,10 @@ class TaskListFragment : Fragment(), TaskListListener {
                 openLoginScreen()
                 true
             }
+            R.id.task_list_menu_sync -> {
+
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
 
@@ -119,14 +138,19 @@ class TaskListFragment : Fragment(), TaskListListener {
 
     private fun openLoginScreen() {
         activity?.let {
-            it.startActivity(Intent(it.applicationContext, LoginActivity::class.java))
+            mStartLoginForResult.launch(Intent(it.applicationContext, LoginActivity::class.java))
+        }
+    }
+
+    private fun onLoginResult(result: ActivityResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            activity?.invalidateOptionsMenu()
         }
     }
 
     override fun onResume() {
         super.onResume()
         mListViewModel.loadAllTasks()
-        activity?.invalidateOptionsMenu()
     }
 
     private fun updateTasks(tasks: MutableList<Task>) {
