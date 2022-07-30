@@ -6,5 +6,8 @@ class PreferenceConstants {
 
         // List
         const val PREF_KEY_HIDE_COMPLETED = "pref_key_hide_completed"
+
+        // Account
+        const val PREF_KEY_ACCOUNT_TOKEN = "pref_key_account_token"
     }
 }

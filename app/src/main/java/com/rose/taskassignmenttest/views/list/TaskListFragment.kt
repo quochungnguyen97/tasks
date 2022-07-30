@@ -2,7 +2,6 @@ package com.rose.taskassignmenttest.views.list
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.TextView
@@ -16,8 +15,10 @@ import com.rose.taskassignmenttest.viewmodels.ListViewModel
 import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.constants.PreferenceConstants
 import com.rose.taskassignmenttest.utils.PreferenceUtils
+import com.rose.taskassignmenttest.utils.StringUtils
 import com.rose.taskassignmenttest.views.detail.DetailActivity
 import com.rose.taskassignmenttest.views.list.items.ItemsSorter
+import com.rose.taskassignmenttest.views.login.LoginActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,19 +61,31 @@ class TaskListFragment : Fragment(), TaskListListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        activity?.let {
-            it.menuInflater.inflate(R.menu.task_list_option_menu, menu)
-            if (PreferenceUtils.getBooleanPreference(
-                    it,
-                    PreferenceConstants.PREF_KEY_HIDE_COMPLETED
-                )
-            ) {
+        activity?.menuInflater?.inflate(R.menu.task_list_option_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        context?.let {
+            val isHideAccount = PreferenceUtils.getBooleanPreference(
+                it,
+                PreferenceConstants.PREF_KEY_HIDE_COMPLETED
+            )
+            if (isHideAccount) {
                 menu.findItem(R.id.task_list_menu_item_hide_completed)?.isVisible = false
             } else {
                 menu.findItem(R.id.task_list_menu_item_show_completed)?.isVisible = false
             }
+
+            val isLoggedIn = !StringUtils.isEmptyOrBlank(PreferenceUtils.getAccountToken(it))
+            if (isLoggedIn) {
+                menu.findItem(R.id.task_list_menu_login)?.isVisible = false
+                menu.findItem(R.id.task_list_menu_register)?.isVisible = false
+            } else {
+                menu.findItem(R.id.task_list_menu_account)?.isVisible = false
+            }
         }
-        super.onCreateOptionsMenu(menu, inflater)
+        super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
@@ -85,21 +98,35 @@ class TaskListFragment : Fragment(), TaskListListener {
                 updateHideCompleted(true)
                 true
             }
+            R.id.task_list_menu_login -> {
+                openLoginScreen()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
 
     private fun updateHideCompleted(hideCompleted: Boolean) {
         activity?.let {
-            PreferenceUtils.setPreference(it, PreferenceConstants.PREF_KEY_HIDE_COMPLETED, hideCompleted)
+            PreferenceUtils.setPreference(
+                it,
+                PreferenceConstants.PREF_KEY_HIDE_COMPLETED,
+                hideCompleted
+            )
             mListViewModel.loadAllTasks()
             it.invalidateOptionsMenu()
         }
+    }
 
+    private fun openLoginScreen() {
+        activity?.let {
+            it.startActivity(Intent(it.applicationContext, LoginActivity::class.java))
+        }
     }
 
     override fun onResume() {
         super.onResume()
         mListViewModel.loadAllTasks()
+        activity?.invalidateOptionsMenu()
     }
 
     private fun updateTasks(tasks: MutableList<Task>) {

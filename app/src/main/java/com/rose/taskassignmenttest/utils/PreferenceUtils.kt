@@ -10,6 +10,11 @@ class PreferenceUtils {
             return sharedPreferences.getBoolean(key, defaultKey)
         }
 
+        fun getStringPreference(context: Context, key: String, defaultKey: String = StringUtils.EMPTY): String {
+            val sharedPreferences = context.getSharedPreferences(PreferenceConstants.PREF_FILE, Context.MODE_PRIVATE)
+            return sharedPreferences.getString(key, defaultKey) ?: defaultKey
+        }
+
         fun setPreference(context: Context, key: String, value: Boolean) {
             context.getSharedPreferences(PreferenceConstants.PREF_FILE, Context.MODE_PRIVATE)
                 .edit().apply {
@@ -17,5 +22,20 @@ class PreferenceUtils {
                     apply()
                 }
         }
+
+        fun setPreference(context: Context, key: String, value: String) {
+            context.getSharedPreferences(PreferenceConstants.PREF_FILE, Context.MODE_PRIVATE)
+                .edit().apply {
+                    putString(key, value)
+                    apply()
+                }
+        }
+
+        fun setAccountToken(context: Context, token: String) {
+            setPreference(context, PreferenceConstants.PREF_KEY_ACCOUNT_TOKEN, token)
+        }
+
+        fun getAccountToken(context: Context): String =
+            getStringPreference(context, PreferenceConstants.PREF_KEY_ACCOUNT_TOKEN)
     }
 }
