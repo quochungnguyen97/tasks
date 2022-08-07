@@ -17,7 +17,6 @@ class DetailViewModel : ViewModel() {
 
     private val mIsDataChanged = MutableLiveData<Boolean>()
     private val mIsSaveSuccess = MutableLiveData<Boolean>()
-    private val mOnTitleEmptyNotified = MutableLiveData<Boolean>()
 
     fun setTaskDao(taskDao: TaskDao) {
         mTaskDao = taskDao
@@ -26,7 +25,6 @@ class DetailViewModel : ViewModel() {
     fun getTask(): LiveData<Task> = mTask
     fun getIsDataChanged(): LiveData<Boolean> = mIsDataChanged
     fun getIsSaveSuccess(): LiveData<Boolean> = mIsSaveSuccess
-    fun getOnTitleEmptyNotified(): LiveData<Boolean> = mOnTitleEmptyNotified
 
     fun updateTaskData(title: String, checked: Boolean) =
         mTask.value?.let {
@@ -58,12 +56,8 @@ class DetailViewModel : ViewModel() {
         if (mTask.value == null) {
             mTaskId.value?.let { taskId ->
                 if (taskId != -1) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        mTaskDao.getTask(taskId).let { task ->
-                            CoroutineScope(Dispatchers.Main).launch {
-                                mTask.value = task
-                            }
-                        }
+                    CoroutineScope(Dispatchers.Main).launch {
+                        mTask.value = mTaskDao.getTask(taskId) ?: Task.newTask()
                     }
                 } else {
                     initTask()
@@ -82,14 +76,17 @@ class DetailViewModel : ViewModel() {
 
     fun checkDataChanged() {
         mTask.value?.let { task ->
-            CoroutineScope(Dispatchers.IO).launch {
-                val loadedTask = mTaskDao.getTask(task.id)
-                val isDataNotChanged = task.completed == loadedTask.completed &&
-                        task.deadLine == loadedTask.deadLine &&
-                        task.createdTime == loadedTask.createdTime &&
-                        task.status == loadedTask.status &&
-                        task.title == loadedTask.title
-                CoroutineScope(Dispatchers.Main).launch { mIsDataChanged.value = !isDataNotChanged }
+            CoroutineScope(Dispatchers.Main).launch {
+                mTaskDao.getTask(task.id)?.let { loadedTask ->
+                    val isDataNotChanged = task.completed == loadedTask.completed &&
+                            task.deadLine == loadedTask.deadLine &&
+                            task.createdTime == loadedTask.createdTime &&
+                            task.status == loadedTask.status &&
+                            task.title == loadedTask.title
+                    mIsDataChanged.value = !isDataNotChanged
+                } ?: run {
+                    mIsDataChanged.value = false
+                }
             }
         } ?: run {
             mIsDataChanged.value = false
@@ -98,11 +95,9 @@ class DetailViewModel : ViewModel() {
 
     fun saveTask() =
         mTask.value?.let {
-            if (it.title.isEmpty()) {
-                mOnTitleEmptyNotified.value = true
-            } else {
-                CoroutineScope(Dispatchers.IO).launch {
-                    if (it.id != -1) {
+            if (it.title.isNotEmpty()) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    mIsSaveSuccess.value = if (it.id != -1) {
                         mTaskDao.updateTask(
                             Task(
                                 it.id, it.title, it.createdTime, System.currentTimeMillis(),
@@ -118,10 +113,9 @@ class DetailViewModel : ViewModel() {
                             )
                         )
                     }
-                    CoroutineScope(Dispatchers.Main).launch {
-                        mIsSaveSuccess.value = true
-                    }
                 }
+            } else {
+                mIsDataChanged.value = false
             }
         } ?: run {
             mIsSaveSuccess.value = false

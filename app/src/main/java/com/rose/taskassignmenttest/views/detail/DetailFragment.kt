@@ -14,6 +14,7 @@ import com.rose.taskassignmenttest.data.STATUS_DONE
 import com.rose.taskassignmenttest.data.STATUS_IN_PROGRESS
 import com.rose.taskassignmenttest.data.STATUS_NOT_STARTED
 import com.rose.taskassignmenttest.data.Task
+import com.rose.taskassignmenttest.utils.StringUtils
 import com.rose.taskassignmenttest.utils.TimeUtils
 import com.rose.taskassignmenttest.utils.ViewUtils
 import com.rose.taskassignmenttest.viewmodels.DetailViewModel
@@ -48,6 +49,7 @@ class DetailFragment : Fragment() {
         val deadlineContainer: View = root.findViewById(R.id.detail_deadline_container)
         val statusContainer: View = root.findViewById(R.id.detail_status_container)
         val cancelButton: Button = root.findViewById(R.id.detail_cancel_btn)
+        val saveButton: Button = root.findViewById(R.id.detail_save_btn)
 
         activity?.let {
             mViewModel = ViewModelProvider(it)[DetailViewModel::class.java]
@@ -56,49 +58,44 @@ class DetailFragment : Fragment() {
             mViewModel.getIsDataChanged().observe(it) { isDataChanged ->
                 onDataChanged(isDataChanged)
             }
-            mViewModel.getOnTitleEmptyNotified().observe(it) { isNotified ->
-                if (isNotified) {
-                    Toast.makeText(it, it.getString(R.string.title_empty_notify), Toast.LENGTH_SHORT)
-                        .show()
-                    mTitleText.requestFocus()
-                }
-            }
 
             mViewModel.loadTask()
-            root?.let { view ->
-                view.findViewById<Button>(R.id.detail_save_btn)
-                    .setOnClickListener {
-                        updateTitleAndChecked()
-                        mViewModel.saveTask()
-                    }
-            }
 
             mDeadlineTimeHandler = DateTimeHandler(it) { time -> mViewModel.updateDeadline(time) }
 
             mStatusPopupMenu = PopupMenu(requireContext(), statusContainer).apply {
-                    setOnMenuItemClickListener { menuItem ->
-                        when (menuItem.itemId) {
-                            R.id.menu_not_started -> {
-                                mViewModel.updateStatus(STATUS_NOT_STARTED)
-                                true
-                            }
-                            R.id.menu_in_progress -> {
-                                mViewModel.updateStatus(STATUS_IN_PROGRESS)
-                                true
-                            }
-                            R.id.menu_done -> {
-                                mViewModel.updateStatus(STATUS_DONE)
-                                true
-                            }
-                            else -> false
+                setOnMenuItemClickListener { menuItem ->
+                    when (menuItem.itemId) {
+                        R.id.menu_not_started -> {
+                            mViewModel.updateStatus(STATUS_NOT_STARTED)
+                            true
                         }
+                        R.id.menu_in_progress -> {
+                            mViewModel.updateStatus(STATUS_IN_PROGRESS)
+                            true
+                        }
+                        R.id.menu_done -> {
+                            mViewModel.updateStatus(STATUS_DONE)
+                            true
+                        }
+                        else -> false
                     }
-                    inflate(R.menu.detail_status_popup_menu)
                 }
+                inflate(R.menu.detail_status_popup_menu)
+            }
 
             statusContainer.setOnClickListener {
                 updateTitleAndChecked()
                 mStatusPopupMenu.show()
+            }
+
+            saveButton.setOnClickListener {
+                if (StringUtils.isEmptyOrBlank(mTitleText.text.toString())) {
+                    warnTitleEmpty()
+                } else {
+                    updateTitleAndChecked()
+                    mViewModel.saveTask()
+                }
             }
 
             cancelButton.setOnClickListener {
@@ -120,6 +117,14 @@ class DetailFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         updateTitleAndChecked()
+    }
+
+    private fun warnTitleEmpty() {
+        context?.let {
+            Toast.makeText(it, it.getString(R.string.title_empty_notify), Toast.LENGTH_SHORT)
+                .show()
+            mTitleText.requestFocus()
+        }
     }
 
     private fun updateTitleAndChecked() {

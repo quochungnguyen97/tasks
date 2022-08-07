@@ -30,8 +30,10 @@ class ListViewModel : ViewModel() {
     fun deleteTask(taskId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             mAllTasks.value?.first { t -> t.id == taskId }.let {
-                mTaskDao.deleteTask(taskId)
-                loadAllTasks()
+                val isDeleted = mTaskDao.deleteTask(taskId)
+                if (isDeleted) {
+                    loadAllTasks()
+                }
             }
         }
     }
@@ -42,13 +44,15 @@ class ListViewModel : ViewModel() {
             mAllTasks.value?.let { list ->
                 list.first { t -> t.id == taskId }.let { task ->
                     if (task.completed != checked) {
-                        mTaskDao.updateTask(
+                        val isUpdated = mTaskDao.updateTask(
                             Task(
                                 task.id, task.title, task.createdTime, System.currentTimeMillis(),
                                 checked, task.status, task.deadLine
                             )
                         )
-                        loadAllTasks()
+                        if (isUpdated) {
+                            loadAllTasks()
+                        }
                     }
                 }
             }
@@ -56,11 +60,8 @@ class ListViewModel : ViewModel() {
     }
 
     fun loadAllTasks() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val list = mTaskDao.getAllTasks()
-            CoroutineScope(Dispatchers.Main).launch {
-                mAllTasks.value = list
-            }
+        CoroutineScope(Dispatchers.Main).launch {
+            mAllTasks.value = mTaskDao.getAllTasks()
         }
     }
 }
