@@ -61,7 +61,7 @@ class TaskDaoImpl(private val mContext: Context) : TaskDao {
     }
 
     override suspend fun insertTask(task: Task): Boolean = withContext(Dispatchers.IO) {
-        mRoomTaskDao.insertAll(RoomTaskData.fromTaskData(task))
+        mRoomTaskDao.insertAll(RoomTaskData.fromNewTaskData(task))
         if (task.deadLine != -1L && !task.completed) {
             NotiUtils.setNotiAlarm(mContext, task.deadLine, task)
         }
