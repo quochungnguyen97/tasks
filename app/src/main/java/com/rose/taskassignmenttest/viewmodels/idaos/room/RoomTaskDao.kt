@@ -13,9 +13,11 @@ interface RoomTaskDao {
     @Query("SELECT * FROM task WHERE uid IN (:uids)")
     fun getAllByIds(uids: IntArray): List<RoomTaskData>
 
+    // TODO modify to return list id inserted/modified
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg tasks: RoomTaskData)
 
+    // TODO return modified row count
     @Query("DELETE FROM task WHERE uid IN (:uids)")
     fun delete(uids: IntArray)
 }

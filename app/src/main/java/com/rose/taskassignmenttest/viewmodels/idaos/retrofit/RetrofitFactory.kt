@@ -12,6 +12,7 @@ class RetrofitFactory {
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .baseUrl(API_URL).build()
 
-        fun userService(): UserService = retrofit().create(UserService::class.java)
+        fun userService(): UserRetrofitService = retrofit().create(UserRetrofitService::class.java)
+        fun taskService(): TaskRetrofitService = retrofit().create(TaskRetrofitService::class.java)
     }
 }

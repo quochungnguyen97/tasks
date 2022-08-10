@@ -39,6 +39,10 @@
                 <action android:name="com.rose.tasks.SHOW_NOTI_ACTION" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".services.TaskSyncService" android:exported="false">
+
+        </service>
     </application>
 
 </manifest>
