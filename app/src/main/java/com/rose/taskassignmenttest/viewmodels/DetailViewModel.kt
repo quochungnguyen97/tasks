@@ -29,16 +29,16 @@ class DetailViewModel : ViewModel() {
     fun updateTaskData(title: String, checked: Boolean) =
         mTask.value?.let {
             mTask.value = Task(
-                it.id, title, it.createdTime, it.modifiedTime, checked,
-                it.status, it.deadLine
+                it.id, it.serverId, title, it.createdTime, it.modifiedTime, checked,
+                it.status, it.deadLine, it.deleted
             )
         }
 
     fun updateStatus(status: Int) =
         mTask.value?.let {
             mTask.value = Task(
-                it.id, it.title, it.createdTime, it.modifiedTime, it.completed,
-                status, it.deadLine
+                it.id, it.serverId, it.title, it.createdTime, it.modifiedTime, it.completed,
+                status, it.deadLine, it.deleted
             )
         }
 
@@ -46,8 +46,8 @@ class DetailViewModel : ViewModel() {
     fun updateDeadline(timeMillis: Long) =
         mTask.value?.let {
             mTask.value = Task(
-                it.id, it.title, it.createdTime, it.modifiedTime, it.completed,
-                it.status, timeMillis
+                it.id, it.serverId, it.title, it.createdTime, it.modifiedTime, it.completed,
+                it.status, timeMillis, it.deleted
             )
         }
 
@@ -100,16 +100,16 @@ class DetailViewModel : ViewModel() {
                     mIsSaveSuccess.value = if (it.id != -1) {
                         mTaskDao.updateTask(
                             Task(
-                                it.id, it.title, it.createdTime, System.currentTimeMillis(),
-                                it.completed, it.status, it.deadLine
+                                it.id, it.serverId, it.title, it.createdTime, System.currentTimeMillis(),
+                                it.completed, it.status, it.deadLine, it.deleted
                             )
                         )
                     } else {
                         val currentTime = System.currentTimeMillis()
                         mTaskDao.insertTask(
                             Task(
-                                it.id, it.title, currentTime, currentTime,
-                                it.completed, it.status, it.deadLine
+                                it.id, it.serverId, it.title, currentTime, currentTime,
+                                it.completed, it.status, it.deadLine, it.deleted
                             )
                         )
                     }

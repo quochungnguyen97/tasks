@@ -70,7 +70,7 @@ class TaskDaoImpl(private val mContext: Context) : TaskDao {
 
     // TODO check with delete notification task
     override suspend fun deleteTask(taskId: Int): Boolean = withContext(Dispatchers.IO) {
-        mRoomTaskDao.delete(intArrayOf(taskId))
+        mRoomTaskDao.delete(intArrayOf(taskId), System.currentTimeMillis())
         return@withContext true
     }
 }

@@ -46,8 +46,8 @@ class ListViewModel : ViewModel() {
                     if (task.completed != checked) {
                         val isUpdated = mTaskDao.updateTask(
                             Task(
-                                task.id, task.title, task.createdTime, System.currentTimeMillis(),
-                                checked, task.status, task.deadLine
+                                task.id, task.serverId, task.title, task.createdTime, System.currentTimeMillis(),
+                                checked, task.status, task.deadLine, task.deleted
                             )
                         )
                         if (isUpdated) {

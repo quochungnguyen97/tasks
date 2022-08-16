@@ -7,17 +7,17 @@ import androidx.room.Query
 
 @Dao
 interface RoomTaskDao {
-    @Query("Select * from task")
+    @Query("Select * from task WHERE deleted = 0")
     fun getAll(): List<RoomTaskData>
 
-    @Query("SELECT * FROM task WHERE uid IN (:uids)")
-    fun getAllByIds(uids: IntArray): List<RoomTaskData>
+    @Query("SELECT * FROM task WHERE id IN (:listIds) AND deleted = 0")
+    fun getAllByIds(listIds: IntArray): List<RoomTaskData>
 
     // TODO modify to return list id inserted/modified
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg tasks: RoomTaskData)
 
     // TODO return modified row count
-    @Query("DELETE FROM task WHERE uid IN (:uids)")
-    fun delete(uids: IntArray)
+    @Query("UPDATE task SET deleted = 1, modified_time = :updatedTime WHERE id IN (:listIds)")
+    fun delete(listIds: IntArray, updatedTime: Long)
 }
