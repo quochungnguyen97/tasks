@@ -28,27 +28,18 @@ class DetailViewModel : ViewModel() {
 
     fun updateTaskData(title: String, checked: Boolean) =
         mTask.value?.let {
-            mTask.value = Task(
-                it.id, it.serverId, title, it.createdTime, it.modifiedTime, checked,
-                it.status, it.deadLine, it.deleted
-            )
+            mTask.value = it.copy(title = title, completed = checked)
         }
 
     fun updateStatus(status: Int) =
         mTask.value?.let {
-            mTask.value = Task(
-                it.id, it.serverId, it.title, it.createdTime, it.modifiedTime, it.completed,
-                status, it.deadLine, it.deleted
-            )
+            mTask.value = it.copy(status = status)
         }
 
 
     fun updateDeadline(timeMillis: Long) =
         mTask.value?.let {
-            mTask.value = Task(
-                it.id, it.serverId, it.title, it.createdTime, it.modifiedTime, it.completed,
-                it.status, timeMillis, it.deleted
-            )
+            mTask.value = it.copy(deadLine = timeMillis)
         }
 
 
@@ -98,19 +89,11 @@ class DetailViewModel : ViewModel() {
             if (it.title.isNotEmpty()) {
                 CoroutineScope(Dispatchers.Main).launch {
                     mIsSaveSuccess.value = if (it.id != -1) {
-                        mTaskDao.updateTask(
-                            Task(
-                                it.id, it.serverId, it.title, it.createdTime, System.currentTimeMillis(),
-                                it.completed, it.status, it.deadLine, it.deleted
-                            )
-                        )
+                        mTaskDao.updateTask(it.copy(modifiedTime = System.currentTimeMillis()))
                     } else {
                         val currentTime = System.currentTimeMillis()
                         mTaskDao.insertTask(
-                            Task(
-                                it.id, it.serverId, it.title, currentTime, currentTime,
-                                it.completed, it.status, it.deadLine, it.deleted
-                            )
+                            it.copy(modifiedTime = currentTime, createdTime = currentTime)
                         )
                     }
                 }

@@ -15,12 +15,22 @@ data class TaskSchema(
 ) {
     companion object {
         fun fromTask(task: Task): TaskSchema = TaskSchema(
-            "", task.title, task.completed, task.status,
-            task.deadLine, task.createdTime, task.modifiedTime, false, ""
+            task.serverId, task.title, task.completed, task.status,
+            task.deadLine, task.createdTime, task.modifiedTime, task.deleted, ""
         )
     }
 
     fun toTask(): Task {
-        return Task(-1, title, createdTime, modifiedTime, completed, status, deadline)
+        return Task(
+            -1,
+            uuid,
+            title,
+            createdTime,
+            modifiedTime,
+            completed,
+            status,
+            deadline,
+            deleted
+        )
     }
 }

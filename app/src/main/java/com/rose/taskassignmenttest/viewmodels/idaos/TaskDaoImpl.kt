@@ -27,7 +27,7 @@ class TaskDaoImpl(private val mContext: Context) : TaskDao {
                 PreferenceConstants.PREF_KEY_HIDE_COMPLETED
             )
         ) {
-            return@withContext allTasks.filter { task -> task.completed }.toMutableList()
+            return@withContext allTasks.filter { task -> !task.completed }.toMutableList()
         } else {
             return@withContext allTasks
         }
