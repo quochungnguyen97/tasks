@@ -7,8 +7,8 @@ import android.widget.Toast
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.viewmodels.idaos.retrofit.RetrofitFactory
 import com.rose.taskassignmenttest.viewmodels.idaos.retrofit.schema.TaskSchema
-import com.rose.taskassignmenttest.viewmodels.idaos.room.RoomTaskDao
 import com.rose.taskassignmenttest.viewmodels.idaos.room.RoomTaskData
+import com.rose.taskassignmenttest.viewmodels.idaos.room.SyncRoomTaskDao
 import com.rose.taskassignmenttest.viewmodels.idaos.room.TaskAppDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +17,7 @@ import kotlinx.coroutines.withContext
 
 class TaskSyncService : Service() {
     private val mTaskRetrofitService = RetrofitFactory.taskService()
-    private var mRoomTaskDao: RoomTaskDao? = null
+    private var mRoomTaskDao: SyncRoomTaskDao? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Toast.makeText(applicationContext, "Started sync", Toast.LENGTH_SHORT).show()
@@ -42,7 +42,7 @@ class TaskSyncService : Service() {
 
     private fun init() {
         if (mRoomTaskDao == null) {
-            mRoomTaskDao = TaskAppDatabase.getInstance(applicationContext).taskDao()
+            mRoomTaskDao = TaskAppDatabase.getInstance(applicationContext).syncTaskDao()
         }
     }
 
