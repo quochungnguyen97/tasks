@@ -33,4 +33,6 @@ abstract class TaskAppDatabase : RoomDatabase() {
     }
 
     abstract fun taskDao(): RoomTaskDao
+
+    abstract fun syncTaskDao(): SyncRoomTaskDao
 }
