@@ -17,6 +17,7 @@ import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.viewmodels.ListViewModel
 import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.constants.PreferenceConstants
+import com.rose.taskassignmenttest.services.TaskSyncService
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.utils.StringUtils
 import com.rose.taskassignmenttest.views.detail.DetailActivity
@@ -118,7 +119,9 @@ class TaskListFragment : Fragment(), TaskListListener {
                 true
             }
             R.id.task_list_menu_sync -> {
-
+                activity?.let {
+                    it.startService(Intent(it, TaskSyncService::class.java))
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
