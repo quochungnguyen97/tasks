@@ -9,5 +9,8 @@ class PreferenceConstants {
 
         // Account
         const val PREF_KEY_ACCOUNT_TOKEN = "pref_key_account_token"
+
+        // Sync
+        const val PREF_KEY_IS_SYNCING = "pref_key_is_syncing"
     }
 }

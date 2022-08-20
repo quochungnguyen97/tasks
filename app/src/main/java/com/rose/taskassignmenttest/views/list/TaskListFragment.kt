@@ -1,7 +1,10 @@
 package com.rose.taskassignmenttest.views.list
 
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -10,9 +13,11 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rose.taskassignmenttest.R
+import com.rose.taskassignmenttest.constants.ActionConstants
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.viewmodels.ListViewModel
 import com.rose.taskassignmenttest.constants.ExtraConstants
@@ -40,6 +45,21 @@ class TaskListFragment : Fragment(), TaskListListener {
             onLoginResult(result)
         }
 
+    private val mTaskListBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(receiverContext: Context?, intent: Intent?) {
+            intent?.let {
+                val action: String = it.action ?: StringUtils.EMPTY
+                if (action == ActionConstants.SYNC_DONE_ACTION) {
+                    val isSyncSuccess = it.getBooleanExtra(ExtraConstants.SYNC_RESULT, false)
+                    if (isSyncSuccess) {
+                        mListViewModel.loadAllTasks()
+                    }
+                    requireActivity().invalidateOptionsMenu()
+                }
+            }
+        }
+    }
+
     companion object {
         @JvmStatic
         fun newInstance() = TaskListFragment()
@@ -62,6 +82,10 @@ class TaskListFragment : Fragment(), TaskListListener {
             mListViewModel = ViewModelProvider(it).get(ListViewModel::class.java)
             mListViewModel.loadAllTasks()
             mListViewModel.getAllTasks().observe(it) { tasks -> updateTasks(tasks) }
+            LocalBroadcastManager.getInstance(it).registerReceiver(
+                mTaskListBroadcastReceiver,
+                IntentFilter(ActionConstants.SYNC_DONE_ACTION)
+            )
         }
 
         setHasOptionsMenu(true)
@@ -93,7 +117,13 @@ class TaskListFragment : Fragment(), TaskListListener {
                 menu.findItem(R.id.task_list_menu_login)?.isVisible = false
                 menu.findItem(R.id.task_list_menu_register)?.isVisible = false
                 menu.findItem(R.id.task_list_menu_account)?.isVisible = true
-                menu.findItem(R.id.task_list_menu_sync)?.isVisible = true
+                menu.findItem(R.id.task_list_menu_sync)?.let { syncItem ->
+                    syncItem.isVisible = true
+                    syncItem.isEnabled = !PreferenceUtils.getBooleanPreference(
+                        requireContext(),
+                        PreferenceConstants.PREF_KEY_IS_SYNCING
+                    )
+                }
             } else {
                 menu.findItem(R.id.task_list_menu_login)?.isVisible = true
                 menu.findItem(R.id.task_list_menu_register)?.isVisible = true
@@ -122,6 +152,7 @@ class TaskListFragment : Fragment(), TaskListListener {
                 activity?.let {
                     it.startService(Intent(it, TaskSyncService::class.java))
                 }
+                item.isEnabled = false
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -153,6 +184,7 @@ class TaskListFragment : Fragment(), TaskListListener {
 
     override fun onResume() {
         super.onResume()
+        // TODO Handle load task again with onResult
         mListViewModel.loadAllTasks()
     }
 
@@ -187,4 +219,10 @@ class TaskListFragment : Fragment(), TaskListListener {
     }
 
     override fun onDelete(itemId: Int) = mListViewModel.deleteTask(itemId)
+
+    override fun onDestroy() {
+        super.onDestroy()
+        LocalBroadcastManager.getInstance(requireActivity())
+            .unregisterReceiver(mTaskListBroadcastReceiver)
+    }
 }

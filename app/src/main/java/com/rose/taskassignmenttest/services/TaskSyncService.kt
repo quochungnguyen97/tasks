@@ -5,6 +5,10 @@ import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.rose.taskassignmenttest.constants.ActionConstants
+import com.rose.taskassignmenttest.constants.ExtraConstants
+import com.rose.taskassignmenttest.constants.PreferenceConstants
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.utils.StringUtils
@@ -32,8 +36,16 @@ class TaskSyncService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Toast.makeText(applicationContext, "Started sync", Toast.LENGTH_SHORT).show()
+
         CoroutineScope(Dispatchers.Main).launch {
+            PreferenceUtils.setPreference(
+                applicationContext,
+                PreferenceConstants.PREF_KEY_IS_SYNCING,
+                true
+            )
+
             val uuidMapForId: MutableMap<String, Int> = HashMap()
+            // TODO Handle on IO Thread
             val requestTasks = getAllTasksFromDb().map { task ->
                 if (StringUtils.isEmptyOrBlank(task.serverId)) {
                     task.copy(serverId = UUID.randomUUID().toString())
@@ -50,19 +62,31 @@ class TaskSyncService : Service() {
                 requestTasks
             )
             val responseTasks = response.body()
+
             var isResponseTasksSaved = false
             if (response.code() == 200 && responseTasks != null) {
                 logTasks(responseTasks)
                 isResponseTasksSaved =
                     saveTasksToDb(responseTasks.map { taskSchema -> taskSchema.toTask() }
-                        .map { task -> task.copy(id = uuidMapForId[task.serverId] ?: 0)  })
+                        .map { task -> task.copy(id = uuidMapForId[task.serverId] ?: 0) })
             }
+
+            PreferenceUtils.setPreference(
+                applicationContext,
+                PreferenceConstants.PREF_KEY_IS_SYNCING,
+                false
+            )
+
             val message = if (isResponseTasksSaved) {
                 "Sync success"
             } else {
                 "Sync failed"
             }
             Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+
+            val resultIntent = Intent(ActionConstants.SYNC_DONE_ACTION)
+            resultIntent.putExtra(ExtraConstants.SYNC_RESULT, isResponseTasksSaved)
+            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(resultIntent)
         }
         return START_STICKY
     }
@@ -95,6 +119,13 @@ class TaskSyncService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.i(TAG, "onDestroy: ")
+
+        PreferenceUtils.setPreference(
+            applicationContext,
+            PreferenceConstants.PREF_KEY_IS_SYNCING,
+            false
+        )
     }
 
     override fun onBind(p0: Intent?): IBinder? {
