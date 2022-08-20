@@ -25,9 +25,13 @@ class TaskSyncService : Service() {
     private val mTaskRetrofitService = RetrofitFactory.taskService()
     private var mRoomTaskDao: SyncRoomTaskDao? = null
 
+    override fun onCreate() {
+        super.onCreate()
+        init()
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Toast.makeText(applicationContext, "Started sync", Toast.LENGTH_SHORT).show()
-        init()
         CoroutineScope(Dispatchers.Main).launch {
             val uuidMapForId: MutableMap<String, Int> = HashMap()
             val requestTasks = getAllTasksFromDb().map { task ->
