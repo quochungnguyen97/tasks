@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.ConnectException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -44,31 +45,13 @@ class TaskSyncService : Service() {
                 true
             )
 
-            val uuidMapForId: MutableMap<String, Int> = HashMap()
-            // TODO Handle on IO Thread
-            val requestTasks = getAllTasksFromDb().map { task ->
-                if (StringUtils.isEmptyOrBlank(task.serverId)) {
-                    task.copy(serverId = UUID.randomUUID().toString())
-                } else {
-                    task
-                }
-            }.map { task ->
-                uuidMapForId[task.serverId] = task.id
-                TaskSchema.fromTask(task)
-            }
+            val allTasks = getAllTasksFromDb()
+            val responseTasksFromServer = requestSyncTasks(allTasks)
 
-            val response = mTaskRetrofitService.requestSync(
-                PreferenceUtils.getAccountToken(applicationContext),
-                requestTasks
-            )
-            val responseTasks = response.body()
-
-            var isResponseTasksSaved = false
-            if (response.code() == 200 && responseTasks != null) {
-                logTasks(responseTasks)
-                isResponseTasksSaved =
-                    saveTasksToDb(responseTasks.map { taskSchema -> taskSchema.toTask() }
-                        .map { task -> task.copy(id = uuidMapForId[task.serverId] ?: 0) })
+            val isResponseTasksSaved = if (responseTasksFromServer.isNotEmpty()) {
+                saveTasksToDb(responseTasksFromServer)
+            } else {
+                true
             }
 
             PreferenceUtils.setPreference(
@@ -101,6 +84,40 @@ class TaskSyncService : Service() {
         return@withContext mRoomTaskDao?.getAll()?.map { roomTaskData -> roomTaskData.toTaskData() }
             ?: ArrayList()
     }
+
+    private suspend fun requestSyncTasks(requestTasks: List<Task>): List<Task> =
+        withContext(Dispatchers.IO) {
+            val uuidMapForId: MutableMap<String, Int> = HashMap()
+
+            val requestTasksSchema = requestTasks.map { task ->
+                if (StringUtils.isEmptyOrBlank(task.serverId)) {
+                    task.copy(serverId = UUID.randomUUID().toString())
+                } else {
+                    task
+                }
+            }.map { task ->
+                uuidMapForId[task.serverId] = task.id
+                TaskSchema.fromTask(task)
+            }
+
+            try {
+                val response = mTaskRetrofitService.requestSync(
+                    PreferenceUtils.getAccountToken(applicationContext),
+                    requestTasksSchema
+                )
+                val responseTasks = response.body()
+
+                if (response.code() == 200 && responseTasks != null) {
+                    logTasks(responseTasks)
+                    return@withContext responseTasks.map { taskSchema -> taskSchema.toTask() }
+                        .map { task -> task.copy(id = uuidMapForId[task.serverId] ?: 0) }
+                }
+
+            } catch (e: ConnectException) {
+                Log.e(TAG, "requestSyncTasks: ", e)
+            }
+            return@withContext ArrayList()
+        }
 
     private suspend fun saveTasksToDb(tasks: List<Task>): Boolean = withContext(Dispatchers.IO) {
         mRoomTaskDao?.let { roomTaskDao ->

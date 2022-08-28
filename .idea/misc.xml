@@ -33,6 +33,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.11666666666666667" />
         <entry key="app/src/main/res/layout/fragment_detail.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.11666666666666667" />
+        <entry key="app/src/main/res/layout/list_item_task.xml" value="0.1" />
         <entry key="app/src/main/res/menu/task_list_option_menu.xml" value="0.259375" />
       </map>
     </option>
