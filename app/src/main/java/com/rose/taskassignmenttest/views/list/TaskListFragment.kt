@@ -25,6 +25,7 @@ import com.rose.taskassignmenttest.constants.PreferenceConstants
 import com.rose.taskassignmenttest.services.TaskSyncService
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.utils.StringUtils
+import com.rose.taskassignmenttest.views.account.AccountActivity
 import com.rose.taskassignmenttest.views.detail.DetailActivity
 import com.rose.taskassignmenttest.views.list.items.ItemsSorter
 import com.rose.taskassignmenttest.views.login.LoginActivity
@@ -43,6 +44,11 @@ class TaskListFragment : Fragment(), TaskListListener {
     private val mStartLoginForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             onLoginResult(result)
+        }
+
+    private val mStartAccountForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            onAccountResult(result)
         }
 
     private val mTaskListBroadcastReceiver = object : BroadcastReceiver() {
@@ -148,6 +154,10 @@ class TaskListFragment : Fragment(), TaskListListener {
                 openLoginScreen()
                 true
             }
+            R.id.task_list_menu_account -> {
+                openAccountScreen()
+                true
+            }
             R.id.task_list_menu_sync -> {
                 activity?.let {
                     it.startService(Intent(it, TaskSyncService::class.java))
@@ -176,9 +186,24 @@ class TaskListFragment : Fragment(), TaskListListener {
         }
     }
 
+    private fun openAccountScreen() {
+        activity?.let {
+            mStartAccountForResult.launch(Intent(it.applicationContext, AccountActivity::class.java))
+        }
+    }
+
     private fun onLoginResult(result: ActivityResult) {
         if (result.resultCode == Activity.RESULT_OK) {
             activity?.invalidateOptionsMenu()
+        }
+    }
+
+    private fun onAccountResult(result: ActivityResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            val isLogout = result.data?.getBooleanExtra(ExtraConstants.EXTRA_LOGOUT, false) ?: false
+            if (isLogout) {
+                activity?.invalidateOptionsMenu()
+            }
         }
     }
 

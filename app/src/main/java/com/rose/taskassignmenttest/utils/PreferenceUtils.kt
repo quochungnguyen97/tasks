@@ -31,11 +31,23 @@ class PreferenceUtils {
                 }
         }
 
+        fun removePreference(context: Context, key: String) {
+            context.getSharedPreferences(PreferenceConstants.PREF_FILE, Context.MODE_PRIVATE)
+                .edit().apply {
+                    remove(key)
+                    apply()
+                }
+        }
+
         fun setAccountToken(context: Context, token: String) {
             setPreference(context, PreferenceConstants.PREF_KEY_ACCOUNT_TOKEN, token)
         }
 
         fun getAccountToken(context: Context): String =
             getStringPreference(context, PreferenceConstants.PREF_KEY_ACCOUNT_TOKEN)
+
+        fun removeAccountToken(context: Context) {
+            removePreference(context, PreferenceConstants.PREF_KEY_ACCOUNT_TOKEN)
+        }
     }
 }

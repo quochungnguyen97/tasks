@@ -28,9 +28,11 @@
         <entry key="..\:/Android/tasks/app/src/main/res/layout/list_item_task.xml" value="0.36666666666666664" />
         <entry key="..\:/Android/tasks/app/src/main/res/menu/task_list_context_menu.xml" value="0.36666666666666664" />
         <entry key="..\:/Android/tasks/app/src/main/res/menu/task_list_option_menu.xml" value="0.36666666666666664" />
+        <entry key="app/src/main/res/layout/activity_base.xml" value="0.12031408308004053" />
         <entry key="app/src/main/res/layout/activity_detail.xml" value="0.11666666666666667" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.11666666666666667" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.11666666666666667" />
+        <entry key="app/src/main/res/layout/fragment_account.xml" value="0.18659420289855072" />
         <entry key="app/src/main/res/layout/fragment_detail.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.11666666666666667" />
         <entry key="app/src/main/res/layout/list_item_task.xml" value="0.1" />

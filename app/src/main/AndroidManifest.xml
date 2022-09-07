@@ -22,6 +22,8 @@
         <activity
             android:name=".views.detail.DetailActivity"
             android:exported="false" />
+        <activity android:name=".views.account.AccountActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
