@@ -6,6 +6,7 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.constants.ActionConstants
 import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.constants.PreferenceConstants
@@ -36,8 +37,6 @@ class TaskSyncService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Toast.makeText(applicationContext, "Started sync", Toast.LENGTH_SHORT).show()
-
         CoroutineScope(Dispatchers.Main).launch {
             PreferenceUtils.setPreference(
                 applicationContext,
@@ -61,9 +60,9 @@ class TaskSyncService : Service() {
             )
 
             val message = if (isResponseTasksSaved) {
-                "Sync success"
+                R.string.sync_success
             } else {
-                "Sync failed"
+                R.string.sync_failed
             }
             Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
 

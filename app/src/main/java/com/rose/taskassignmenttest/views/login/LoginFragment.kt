@@ -1,5 +1,7 @@
 package com.rose.taskassignmenttest.views.login
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,6 +12,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
+import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.utils.StringUtils
 import com.rose.taskassignmenttest.viewmodels.LoginViewModel
@@ -52,6 +55,11 @@ class LoginFragment : Fragment() {
             } else {
                 Toast.makeText(it, it.getString(R.string.login_success), Toast.LENGTH_SHORT).show()
                 PreferenceUtils.setAccountToken(it, token)
+                it.setResult(Activity.RESULT_OK, Intent().apply {
+                    putExtra(ExtraConstants.EXTRA_RELOAD_LIST, true)
+                    putExtra(ExtraConstants.EXTRA_RELOAD_MENU, true)
+                    putExtra(ExtraConstants.EXTRA_START_SYNC, true)
+                })
                 it.finish()
             }
         }

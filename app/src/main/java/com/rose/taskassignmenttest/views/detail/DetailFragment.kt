@@ -1,6 +1,8 @@
 package com.rose.taskassignmenttest.views.detail
 
+import android.app.Activity
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +12,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
+import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.data.STATUS_DONE
 import com.rose.taskassignmenttest.data.STATUS_IN_PROGRESS
 import com.rose.taskassignmenttest.data.STATUS_NOT_STARTED
@@ -152,6 +155,10 @@ class DetailFragment : Fragment() {
                 it, it.getString(if (isSaved) R.string.task_saved else R.string.failed_to_save),
                 Toast.LENGTH_SHORT
             ).show()
+            it.setResult(
+                Activity.RESULT_OK,
+                Intent().apply { putExtra(ExtraConstants.EXTRA_RELOAD_LIST, true) }
+            )
             it.finish()
         }
     }

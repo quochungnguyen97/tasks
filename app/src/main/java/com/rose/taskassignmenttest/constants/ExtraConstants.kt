@@ -4,7 +4,11 @@ class ExtraConstants {
     companion object {
         // Detail
         const val EXTRA_TASK_ID = "extra_task_id"
-        const val EXTRA_LOGOUT = "extra_logout"
+
+        // List
+        const val EXTRA_RELOAD_LIST = "extra_reload_list"
+        const val EXTRA_RELOAD_MENU = "extra_reload_menu"
+        const val EXTRA_START_SYNC = "extra_start_sync"
 
         // Noti
         const val NOTI_ID = 1

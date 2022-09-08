@@ -42,4 +42,7 @@
     <string name="display_name_pattern">Display name: %s</string>
     <string name="logged_out">Logged out</string>
     <string name="user_token_expired">User token expired, logged out!</string>
+    <string name="started_sync">Started sync</string>
+    <string name="sync_failed">Sync failed</string>
+    <string name="sync_success">Sync success</string>
 </resources>

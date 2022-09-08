@@ -2,14 +2,11 @@ package com.rose.taskassignmenttest.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DetailViewModel : ViewModel() {
+class DetailViewModel : BaseViewModel() {
     private lateinit var mTaskDao: TaskDao
 
     private val mTask = MutableLiveData<Task>()
@@ -47,7 +44,7 @@ class DetailViewModel : ViewModel() {
         if (mTask.value == null) {
             mTaskId.value?.let { taskId ->
                 if (taskId != -1) {
-                    CoroutineScope(Dispatchers.Main).launch {
+                    mCoroutineScope.launch {
                         mTask.value = mTaskDao.getTask(taskId) ?: Task.newTask()
                     }
                 } else {
@@ -67,7 +64,7 @@ class DetailViewModel : ViewModel() {
 
     fun checkDataChanged() {
         mTask.value?.let { task ->
-            CoroutineScope(Dispatchers.Main).launch {
+            mCoroutineScope.launch {
                 mTaskDao.getTask(task.id)?.let { loadedTask ->
                     val isDataNotChanged = task.completed == loadedTask.completed &&
                             task.deadLine == loadedTask.deadLine &&
@@ -87,7 +84,7 @@ class DetailViewModel : ViewModel() {
     fun saveTask() =
         mTask.value?.let {
             if (it.title.isNotEmpty()) {
-                CoroutineScope(Dispatchers.Main).launch {
+                mCoroutineScope.launch {
                     mIsSaveSuccess.value = if (it.id != -1) {
                         mTaskDao.updateTask(it.copy(modifiedTime = System.currentTimeMillis()))
                     } else {
@@ -98,7 +95,7 @@ class DetailViewModel : ViewModel() {
                     }
                 }
             } else {
-                mIsDataChanged.value = false
+                mIsSaveSuccess.value = false
             }
         } ?: run {
             mIsSaveSuccess.value = false

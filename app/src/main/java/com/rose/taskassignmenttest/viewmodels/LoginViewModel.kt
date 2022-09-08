@@ -2,13 +2,10 @@ package com.rose.taskassignmenttest.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.rose.taskassignmenttest.viewmodels.daos.UserDao
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LoginViewModel: ViewModel() {
+class LoginViewModel: BaseViewModel() {
     private val mLoginResult = MutableLiveData<String>()
 
     private lateinit var mUserDao: UserDao
@@ -18,7 +15,7 @@ class LoginViewModel: ViewModel() {
     }
 
     fun login(username: String, password: String) {
-        CoroutineScope(Dispatchers.Main).launch {
+        mCoroutineScope.launch {
             mLoginResult.value = mUserDao.login(username, password)
         }
     }

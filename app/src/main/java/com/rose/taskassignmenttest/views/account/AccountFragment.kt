@@ -1,5 +1,7 @@
 package com.rose.taskassignmenttest.views.account
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +12,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
+import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.utils.StringUtils
 import com.rose.taskassignmenttest.viewmodels.AccountViewModel
@@ -75,6 +78,10 @@ class AccountFragment : Fragment() {
     private fun onLogout() {
         val act = requireActivity()
         PreferenceUtils.removeAccountToken(act)
+        act.setResult(Activity.RESULT_OK, Intent().apply {
+            putExtra(ExtraConstants.EXTRA_RELOAD_LIST, true)
+            putExtra(ExtraConstants.EXTRA_RELOAD_MENU, true)
+        })
         act.finish()
     }
 

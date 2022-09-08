@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
@@ -29,9 +30,7 @@ import com.rose.taskassignmenttest.views.account.AccountActivity
 import com.rose.taskassignmenttest.views.detail.DetailActivity
 import com.rose.taskassignmenttest.views.list.items.ItemsSorter
 import com.rose.taskassignmenttest.views.login.LoginActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
 class TaskListFragment : Fragment(), TaskListListener {
@@ -41,14 +40,11 @@ class TaskListFragment : Fragment(), TaskListListener {
 
     private lateinit var mListViewModel: ListViewModel
 
-    private val mStartLoginForResult =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            onLoginResult(result)
-        }
+    private val mCoroutineScope = CoroutineScope(Dispatchers.Main)
 
-    private val mStartAccountForResult =
+    private val mStartActivityForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            onAccountResult(result)
+            handleActivityResult(result)
         }
 
     private val mTaskListBroadcastReceiver = object : BroadcastReceiver() {
@@ -159,9 +155,8 @@ class TaskListFragment : Fragment(), TaskListListener {
                 true
             }
             R.id.task_list_menu_sync -> {
-                activity?.let {
-                    it.startService(Intent(it, TaskSyncService::class.java))
-                }
+                startSync()
+                Toast.makeText(requireContext(), R.string.started_sync, Toast.LENGTH_SHORT).show()
                 item.isEnabled = false
                 true
             }
@@ -182,58 +177,89 @@ class TaskListFragment : Fragment(), TaskListListener {
 
     private fun openLoginScreen() {
         activity?.let {
-            mStartLoginForResult.launch(Intent(it.applicationContext, LoginActivity::class.java))
+            mStartActivityForResult.launch(Intent(it.applicationContext, LoginActivity::class.java))
         }
     }
 
     private fun openAccountScreen() {
         activity?.let {
-            mStartAccountForResult.launch(Intent(it.applicationContext, AccountActivity::class.java))
+            mStartActivityForResult.launch(
+                Intent(
+                    it.applicationContext,
+                    AccountActivity::class.java
+                )
+            )
         }
     }
 
-    private fun onLoginResult(result: ActivityResult) {
+    private fun handleActivityResult(result: ActivityResult) {
         if (result.resultCode == Activity.RESULT_OK) {
-            activity?.invalidateOptionsMenu()
-        }
-    }
+            result.data?.let { data ->
+                val reloadList = data.getBooleanExtra(
+                    ExtraConstants.EXTRA_RELOAD_LIST,
+                    false
+                )
+                val reloadMenu = data.getBooleanExtra(
+                    ExtraConstants.EXTRA_RELOAD_MENU,
+                    false
+                )
+                val startSync = data.getBooleanExtra(
+                    ExtraConstants.EXTRA_START_SYNC,
+                    false
+                )
 
-    private fun onAccountResult(result: ActivityResult) {
-        if (result.resultCode == Activity.RESULT_OK) {
-            val isLogout = result.data?.getBooleanExtra(ExtraConstants.EXTRA_LOGOUT, false) ?: false
-            if (isLogout) {
-                activity?.invalidateOptionsMenu()
+                if (reloadList) {
+                    mListViewModel.loadAllTasks()
+                }
+
+                if (reloadMenu) {
+                    activity?.invalidateOptionsMenu()
+                }
+
+                if (startSync) {
+                    startSync()
+                }
             }
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        // TODO Handle load task again with onResult
-        mListViewModel.loadAllTasks()
+    private fun startSync() {
+        activity?.let {
+            it.startService(Intent(it, TaskSyncService::class.java))
+        }
+    }
+
+    private fun resetResultData(data: Intent) {
+        data.removeExtra(ExtraConstants.EXTRA_RELOAD_LIST)
+        data.removeExtra(ExtraConstants.EXTRA_RELOAD_MENU)
+        data.removeExtra(ExtraConstants.EXTRA_START_SYNC)
     }
 
     private fun updateTasks(tasks: MutableList<Task>) {
-        context?.let {
-            CoroutineScope(Dispatchers.IO).launch {
+        mCoroutineScope.launch {
+            withContext(Dispatchers.IO) {
                 mListAdapter.updateItems(
                     ItemsSorter.getGroupSortItemsList(
                         tasks,
                         ItemsSorter.GROUP_BY_STATUS,
-                        it
+                        requireContext()
                     )
                 )
-                CoroutineScope(Dispatchers.Main).launch { mListAdapter.notifyDataSetChanged() }
             }
+            mListAdapter.notifyDataSetChanged()
         }
         mEmptyText.isVisible = tasks.isEmpty()
     }
 
     override fun onClick(itemId: Int) {
         context?.let {
-            it.startActivity(Intent(it.applicationContext, DetailActivity::class.java).apply {
-                putExtra(ExtraConstants.EXTRA_TASK_ID, itemId)
-            })
+            mStartActivityForResult.launch(
+                Intent(
+                    it.applicationContext,
+                    DetailActivity::class.java
+                ).apply {
+                    putExtra(ExtraConstants.EXTRA_TASK_ID, itemId)
+                })
         }
     }
 
@@ -249,5 +275,6 @@ class TaskListFragment : Fragment(), TaskListListener {
         super.onDestroy()
         LocalBroadcastManager.getInstance(requireActivity())
             .unregisterReceiver(mTaskListBroadcastReceiver)
+        mCoroutineScope.coroutineContext.cancelChildren()
     }
 }
