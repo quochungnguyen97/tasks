@@ -10,6 +10,9 @@ class ExtraConstants {
         const val EXTRA_RELOAD_MENU = "extra_reload_menu"
         const val EXTRA_START_SYNC = "extra_start_sync"
 
+        // Login
+        const val EXTRA_REGISTERED_USERNAME = "extra_registered_username"
+
         // Noti
         const val NOTI_ID = 1
         const val EXTRA_TASK_TITLE = "extra_task_title"

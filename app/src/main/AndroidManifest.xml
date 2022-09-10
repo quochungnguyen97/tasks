@@ -24,6 +24,8 @@
             android:exported="false" />
         <activity android:name=".views.account.AccountActivity"
             android:exported="false" />
+        <activity android:name=".views.register.RegisterActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

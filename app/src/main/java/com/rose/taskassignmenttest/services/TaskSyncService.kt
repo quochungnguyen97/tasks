@@ -20,6 +20,7 @@ import com.rose.taskassignmenttest.daos.room.SyncRoomTaskDao
 import com.rose.taskassignmenttest.daos.room.TaskAppDatabase
 import kotlinx.coroutines.*
 import java.net.ConnectException
+import java.net.SocketTimeoutException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -117,6 +118,8 @@ class TaskSyncService : Service() {
                 return@withContext updatedTasks
             } catch (e: ConnectException) {
                 Log.e(TAG, "requestSyncTasks: ", e)
+            } catch (e: SocketTimeoutException) {
+                Log.e(TAG, "requestSyncTasks: timeout", e)
             }
             return@withContext ArrayList()
         }

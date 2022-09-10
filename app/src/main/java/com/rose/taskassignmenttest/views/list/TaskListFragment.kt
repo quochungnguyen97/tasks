@@ -127,7 +127,6 @@ class TaskListFragment : Fragment(), TaskListListener {
             val isLoggedIn = !StringUtils.isEmptyOrBlank(PreferenceUtils.getAccountToken(it))
             if (isLoggedIn) {
                 menu.findItem(R.id.task_list_menu_login)?.isVisible = false
-                menu.findItem(R.id.task_list_menu_register)?.isVisible = false
                 menu.findItem(R.id.task_list_menu_account)?.isVisible = true
                 menu.findItem(R.id.task_list_menu_sync)?.let { syncItem ->
                     syncItem.isVisible = true
@@ -138,7 +137,6 @@ class TaskListFragment : Fragment(), TaskListListener {
                 }
             } else {
                 menu.findItem(R.id.task_list_menu_login)?.isVisible = true
-                menu.findItem(R.id.task_list_menu_register)?.isVisible = true
                 menu.findItem(R.id.task_list_menu_account)?.isVisible = false
                 menu.findItem(R.id.task_list_menu_sync)?.isVisible = false
             }
