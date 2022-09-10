@@ -85,11 +85,14 @@ class TaskSyncService : Service() {
 
     private suspend fun requestSyncTasks(requestTasks: List<Task>): List<Task> =
         withContext(Dispatchers.IO) {
+            val updatedTasks: MutableList<Task> = ArrayList()
             val uuidMapForId: MutableMap<String, Int> = HashMap()
 
             val requestTasksSchema = requestTasks.map { task ->
                 if (StringUtils.isEmptyOrBlank(task.serverId)) {
-                    task.copy(serverId = UUID.randomUUID().toString())
+                    val newServerIdTask = task.copy(serverId = UUID.randomUUID().toString())
+                    updatedTasks.add(newServerIdTask)
+                    newServerIdTask
                 } else {
                     task
                 }
@@ -107,10 +110,11 @@ class TaskSyncService : Service() {
 
                 if (response.code() == 200 && responseTasks != null) {
                     logTasks(responseTasks)
-                    return@withContext responseTasks.map { taskSchema -> taskSchema.toTask() }
-                        .map { task -> task.copy(id = uuidMapForId[task.serverId] ?: 0) }
+                    updatedTasks.addAll(responseTasks.map { taskSchema -> taskSchema.toTask() }
+                        .map { task -> task.copy(id = uuidMapForId[task.serverId] ?: 0) })
                 }
 
+                return@withContext updatedTasks
             } catch (e: ConnectException) {
                 Log.e(TAG, "requestSyncTasks: ", e)
             }
@@ -121,6 +125,7 @@ class TaskSyncService : Service() {
         mRoomTaskDao?.let { roomTaskDao ->
             val roomTaskDataList = tasks.map { task -> RoomTaskData.fromTaskData(task) }
             roomTaskDao.insertAll(*roomTaskDataList.toTypedArray())
+            roomTaskDao.deletePermanentTasks()
             return@withContext true
         } ?: run {
             return@withContext false

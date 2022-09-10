@@ -13,7 +13,6 @@ interface SyncRoomTaskDao: AbstractRoomTaskDao {
     @Query("SELECT * FROM task WHERE id IN (:listIds)")
     fun getAllByIds(listIds: IntArray): List<RoomTaskData>
 
-    // TODO return modified row count
-    @Query("DELETE FROM task WHERE id IN (:listIds)")
-    fun delete(listIds: IntArray)
+    @Query("DELETE FROM task WHERE deleted = 1")
+    fun deletePermanentTasks()
 }
