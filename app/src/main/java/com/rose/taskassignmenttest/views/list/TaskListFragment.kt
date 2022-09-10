@@ -239,12 +239,6 @@ class TaskListFragment : Fragment(), TaskListListener {
         }
     }
 
-    private fun resetResultData(data: Intent) {
-        data.removeExtra(ExtraConstants.EXTRA_RELOAD_LIST)
-        data.removeExtra(ExtraConstants.EXTRA_RELOAD_MENU)
-        data.removeExtra(ExtraConstants.EXTRA_START_SYNC)
-    }
-
     private fun updateTasks(tasks: MutableList<Task>) {
         mCoroutineScope.launch {
             withContext(Dispatchers.IO) {

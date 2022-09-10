@@ -15,7 +15,10 @@ interface RoomTaskDao: AbstractRoomTaskDao {
 
     // TODO return modified row count
     @Query("UPDATE task SET deleted = 1, modified_time = :updatedTime WHERE id IN (:listIds)")
-    fun delete(listIds: IntArray, updatedTime: Long)
+    fun delete(listIds: IntArray, updatedTime: Long): Int
+
+    @Query("DELETE FROM task WHERE id IN (:listIds)")
+    fun deleteDirectly(listIds: IntArray): Int
 
     @Query("UPDATE task SET server_id = ''")
     fun clearServerIds()

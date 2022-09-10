@@ -6,7 +6,6 @@ import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.utils.NotiUtils
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
-import com.rose.taskassignmenttest.viewmodels.idaos.room.RoomTaskDao
 import com.rose.taskassignmenttest.viewmodels.idaos.room.RoomTaskData
 import com.rose.taskassignmenttest.viewmodels.idaos.room.TaskAppDatabase
 import kotlinx.coroutines.Dispatchers
@@ -68,9 +67,26 @@ class TaskDaoImpl(private val mContext: Context) : TaskDao {
         return@withContext true
     }
 
-    // TODO check with delete notification task
     override suspend fun deleteTask(taskId: Int): Boolean = withContext(Dispatchers.IO) {
-        mRoomTaskDao.delete(intArrayOf(taskId), System.currentTimeMillis())
-        return@withContext true
+        val taskDataList = mRoomTaskDao.getAllByIds(intArrayOf(taskId))
+        if (taskDataList.size != 1) {
+            return@withContext false
+        }
+
+        val result = if (taskDataList[0].serverId.isBlank()) {
+            mRoomTaskDao.deleteDirectly(intArrayOf(taskId)) == 1
+        } else {
+            mRoomTaskDao.delete(intArrayOf(taskId), System.currentTimeMillis()) == 1
+        }
+
+        if (result && taskDataList[0].deadLine != -1L) {
+            NotiUtils.cancelNotiAlarm(
+                mContext,
+                taskDataList[0].deadLine,
+                taskDataList[0].toTaskData()
+            )
+        }
+
+        return@withContext result
     }
 }
