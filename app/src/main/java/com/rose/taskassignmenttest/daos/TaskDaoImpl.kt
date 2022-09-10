@@ -1,4 +1,4 @@
-package com.rose.taskassignmenttest.viewmodels.idaos
+package com.rose.taskassignmenttest.daos
 
 import android.content.Context
 import com.rose.taskassignmenttest.constants.PreferenceConstants
@@ -6,8 +6,8 @@ import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.utils.NotiUtils
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
-import com.rose.taskassignmenttest.viewmodels.idaos.room.RoomTaskData
-import com.rose.taskassignmenttest.viewmodels.idaos.room.TaskAppDatabase
+import com.rose.taskassignmenttest.daos.room.RoomTaskData
+import com.rose.taskassignmenttest.daos.room.TaskAppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.stream.Collectors

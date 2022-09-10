@@ -1,7 +1,7 @@
-package com.rose.taskassignmenttest.viewmodels.idaos.retrofit
+package com.rose.taskassignmenttest.daos.retrofit
 
 import com.rose.taskassignmenttest.constants.RetrofitConstants
-import com.rose.taskassignmenttest.viewmodels.idaos.retrofit.schema.TaskSchema
+import com.rose.taskassignmenttest.daos.retrofit.schema.TaskSchema
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Header

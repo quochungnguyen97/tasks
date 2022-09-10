@@ -1,4 +1,4 @@
-package com.rose.taskassignmenttest.viewmodels.idaos.retrofit
+package com.rose.taskassignmenttest.daos.retrofit
 
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit

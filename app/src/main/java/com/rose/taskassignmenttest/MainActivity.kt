@@ -9,7 +9,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.utils.NotiChannelManager
 import com.rose.taskassignmenttest.viewmodels.ListViewModel
-import com.rose.taskassignmenttest.viewmodels.idaos.TaskDaoFactory
+import com.rose.taskassignmenttest.daos.TaskDaoFactory
 import com.rose.taskassignmenttest.views.detail.DetailActivity
 import com.rose.taskassignmenttest.views.list.TaskListFragment
 

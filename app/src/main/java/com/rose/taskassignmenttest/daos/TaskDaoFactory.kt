@@ -1,4 +1,4 @@
-package com.rose.taskassignmenttest.viewmodels.idaos
+package com.rose.taskassignmenttest.daos
 
 import android.content.Context
 import com.rose.taskassignmenttest.viewmodels.daos.TaskDao

@@ -8,12 +8,9 @@ import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.viewmodels.daos.LogoutDao
 import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
 import com.rose.taskassignmenttest.viewmodels.daos.UserDao
-import com.rose.taskassignmenttest.viewmodels.idaos.LogoutDaoFactory
-import com.rose.taskassignmenttest.viewmodels.idaos.TaskDaoFactory
-import com.rose.taskassignmenttest.viewmodels.idaos.TaskDaoImpl
-import com.rose.taskassignmenttest.viewmodels.idaos.UserDaoFactory
-import com.rose.taskassignmenttest.viewmodels.idaos.room.RoomTaskDao
-import com.rose.taskassignmenttest.viewmodels.idaos.room.TaskAppDatabase
+import com.rose.taskassignmenttest.daos.LogoutDaoFactory
+import com.rose.taskassignmenttest.daos.TaskDaoFactory
+import com.rose.taskassignmenttest.daos.UserDaoFactory
 
 open class BaseActivity(@StringRes private val mTitleRes: Int): AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,11 +1,11 @@
-package com.rose.taskassignmenttest.viewmodels.idaos.retrofit
+package com.rose.taskassignmenttest.daos.retrofit
 
 import android.util.Log
 import com.rose.taskassignmenttest.constants.RetrofitConstants
 import com.rose.taskassignmenttest.data.User
 import com.rose.taskassignmenttest.utils.StringUtils
 import com.rose.taskassignmenttest.viewmodels.daos.UserDao
-import com.rose.taskassignmenttest.viewmodels.idaos.retrofit.schema.UserSchema
+import com.rose.taskassignmenttest.daos.retrofit.schema.UserSchema
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.ConnectException

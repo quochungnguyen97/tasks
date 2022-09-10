@@ -1,4 +1,4 @@
-package com.rose.taskassignmenttest.viewmodels.idaos.room
+package com.rose.taskassignmenttest.daos.room
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

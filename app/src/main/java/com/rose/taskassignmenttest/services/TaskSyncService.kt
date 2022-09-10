@@ -13,11 +13,11 @@ import com.rose.taskassignmenttest.constants.PreferenceConstants
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.utils.StringUtils
-import com.rose.taskassignmenttest.viewmodels.idaos.retrofit.RetrofitFactory
-import com.rose.taskassignmenttest.viewmodels.idaos.retrofit.schema.TaskSchema
-import com.rose.taskassignmenttest.viewmodels.idaos.room.RoomTaskData
-import com.rose.taskassignmenttest.viewmodels.idaos.room.SyncRoomTaskDao
-import com.rose.taskassignmenttest.viewmodels.idaos.room.TaskAppDatabase
+import com.rose.taskassignmenttest.daos.retrofit.RetrofitFactory
+import com.rose.taskassignmenttest.daos.retrofit.schema.TaskSchema
+import com.rose.taskassignmenttest.daos.room.RoomTaskData
+import com.rose.taskassignmenttest.daos.room.SyncRoomTaskDao
+import com.rose.taskassignmenttest.daos.room.TaskAppDatabase
 import kotlinx.coroutines.*
 import java.net.ConnectException
 import java.util.*

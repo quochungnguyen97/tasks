@@ -1,8 +1,6 @@
-package com.rose.taskassignmenttest.viewmodels.idaos.room
+package com.rose.taskassignmenttest.daos.room
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
