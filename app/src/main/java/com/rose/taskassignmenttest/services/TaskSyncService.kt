@@ -18,10 +18,7 @@ import com.rose.taskassignmenttest.viewmodels.idaos.retrofit.schema.TaskSchema
 import com.rose.taskassignmenttest.viewmodels.idaos.room.RoomTaskData
 import com.rose.taskassignmenttest.viewmodels.idaos.room.SyncRoomTaskDao
 import com.rose.taskassignmenttest.viewmodels.idaos.room.TaskAppDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.net.ConnectException
 import java.util.*
 import kotlin.collections.ArrayList
@@ -31,13 +28,15 @@ class TaskSyncService : Service() {
     private val mTaskRetrofitService = RetrofitFactory.taskService()
     private var mRoomTaskDao: SyncRoomTaskDao? = null
 
+    private val mCoroutineScope = CoroutineScope(Dispatchers.Main)
+
     override fun onCreate() {
         super.onCreate()
         init()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        CoroutineScope(Dispatchers.Main).launch {
+        mCoroutineScope.launch {
             PreferenceUtils.setPreference(
                 applicationContext,
                 PreferenceConstants.PREF_KEY_IS_SYNCING,
@@ -142,6 +141,7 @@ class TaskSyncService : Service() {
             PreferenceConstants.PREF_KEY_IS_SYNCING,
             false
         )
+        mCoroutineScope.coroutineContext.cancelChildren()
     }
 
     override fun onBind(p0: Intent?): IBinder? {

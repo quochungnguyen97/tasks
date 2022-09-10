@@ -43,68 +43,49 @@ class DetailFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_detail, container, false)
 
+        initViewElements(root)
+
+        initViewModel()
+
+        return root
+    }
+
+    private fun initViewElements(root: View) {
         mTitleText = root.findViewById(R.id.detail_title)
         mCheck = root.findViewById(R.id.detail_check)
         mDeadlineText = root.findViewById(R.id.detail_deadline)
         mStatusTagView = root.findViewById(R.id.detail_status_tag)
         mCreateTimeText = root.findViewById(R.id.detail_create_text)
         mModifiedTimeText = root.findViewById(R.id.detail_modified_text)
+
         val deadlineContainer: View = root.findViewById(R.id.detail_deadline_container)
         val statusContainer: View = root.findViewById(R.id.detail_status_container)
         val cancelButton: Button = root.findViewById(R.id.detail_cancel_btn)
         val saveButton: Button = root.findViewById(R.id.detail_save_btn)
 
-        activity?.let {
-            mViewModel = ViewModelProvider(it)[DetailViewModel::class.java]
-            mViewModel.getTask().observe(it) { task -> updateTask(task) }
-            mViewModel.getIsSaveSuccess().observe(it) { isSaved -> onTaskSaved(isSaved) }
-            mViewModel.getIsDataChanged().observe(it) { isDataChanged ->
-                onDataChanged(isDataChanged)
-            }
+        mDeadlineTimeHandler = DateTimeHandler(requireContext()) {
+                time -> mViewModel.updateDeadline(time)
+        }
 
-            mViewModel.loadTask()
-
-            mDeadlineTimeHandler = DateTimeHandler(it) { time -> mViewModel.updateDeadline(time) }
-
-            mStatusPopupMenu = PopupMenu(requireContext(), statusContainer).apply {
-                setOnMenuItemClickListener { menuItem ->
-                    when (menuItem.itemId) {
-                        R.id.menu_not_started -> {
-                            mViewModel.updateStatus(STATUS_NOT_STARTED)
-                            true
-                        }
-                        R.id.menu_in_progress -> {
-                            mViewModel.updateStatus(STATUS_IN_PROGRESS)
-                            true
-                        }
-                        R.id.menu_done -> {
-                            mViewModel.updateStatus(STATUS_DONE)
-                            true
-                        }
-                        else -> false
+        mStatusPopupMenu = PopupMenu(requireContext(), statusContainer).apply {
+            setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.menu_not_started -> {
+                        mViewModel.updateStatus(STATUS_NOT_STARTED)
+                        true
                     }
-                }
-                inflate(R.menu.detail_status_popup_menu)
-            }
-
-            statusContainer.setOnClickListener {
-                updateTitleAndChecked()
-                mStatusPopupMenu.show()
-            }
-
-            saveButton.setOnClickListener {
-                if (StringUtils.isEmptyOrBlank(mTitleText.text.toString())) {
-                    warnTitleEmpty()
-                } else {
-                    updateTitleAndChecked()
-                    mViewModel.saveTask()
+                    R.id.menu_in_progress -> {
+                        mViewModel.updateStatus(STATUS_IN_PROGRESS)
+                        true
+                    }
+                    R.id.menu_done -> {
+                        mViewModel.updateStatus(STATUS_DONE)
+                        true
+                    }
+                    else -> false
                 }
             }
-
-            cancelButton.setOnClickListener {
-                updateTitleAndChecked()
-                mViewModel.checkDataChanged()
-            }
+            inflate(R.menu.detail_status_popup_menu)
         }
 
         deadlineContainer.setOnClickListener {
@@ -114,12 +95,37 @@ class DetailFragment : Fragment() {
             mDeadlineTimeHandler.showDialogs()
         }
 
-        return root
+        statusContainer.setOnClickListener {
+            updateTitleAndChecked()
+            mStatusPopupMenu.show()
+        }
+
+        saveButton.setOnClickListener {
+            if (StringUtils.isEmptyOrBlank(mTitleText.text.toString())) {
+                warnTitleEmpty()
+            } else {
+                updateTitleAndChecked()
+                mViewModel.saveTask()
+            }
+        }
+
+        cancelButton.setOnClickListener {
+            updateTitleAndChecked()
+            mViewModel.checkDataChanged()
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        updateTitleAndChecked()
+    private fun initViewModel() {
+        activity?.let {
+            mViewModel = ViewModelProvider(it)[DetailViewModel::class.java]
+            mViewModel.getTask().observe(it) { task -> updateTask(task) }
+            mViewModel.getIsSaveSuccess().observe(it) { isSaved -> onTaskSaved(isSaved) }
+            mViewModel.getIsDataChanged().observe(it) { isDataChanged ->
+                onDataChanged(isDataChanged)
+            }
+
+            mViewModel.loadTask()
+        }
     }
 
     private fun warnTitleEmpty() {
@@ -175,6 +181,11 @@ class DetailFragment : Fragment() {
                 it.finish()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        updateTitleAndChecked()
     }
 
     companion object {

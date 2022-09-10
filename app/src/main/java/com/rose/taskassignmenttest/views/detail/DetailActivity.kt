@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.viewmodels.DetailViewModel
 import com.rose.taskassignmenttest.constants.ExtraConstants
-import com.rose.taskassignmenttest.viewmodels.idaos.TaskDaoFactory
 import com.rose.taskassignmenttest.views.common.BaseActivity
 
 class DetailActivity : BaseActivity(R.string.task) {
@@ -19,7 +18,7 @@ class DetailActivity : BaseActivity(R.string.task) {
         super.onCreate(savedInstanceState)
 
         val viewModel = ViewModelProvider(this)[DetailViewModel::class.java]
-        viewModel.setTaskDao(TaskDaoFactory.newTaskDao(this))
+        viewModel.setTaskDao(provideTaskDao())
 
         intent?.let {
             if (it.getBooleanExtra(ExtraConstants.EXTRA_IS_FROM_NOTI, false)) {

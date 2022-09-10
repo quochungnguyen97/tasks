@@ -5,6 +5,13 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.rose.taskassignmenttest.R
+import com.rose.taskassignmenttest.viewmodels.daos.LogoutDao
+import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
+import com.rose.taskassignmenttest.viewmodels.daos.UserDao
+import com.rose.taskassignmenttest.viewmodels.idaos.LogoutDaoFactory
+import com.rose.taskassignmenttest.viewmodels.idaos.TaskDaoFactory
+import com.rose.taskassignmenttest.viewmodels.idaos.TaskDaoImpl
+import com.rose.taskassignmenttest.viewmodels.idaos.UserDaoFactory
 import com.rose.taskassignmenttest.viewmodels.idaos.room.RoomTaskDao
 import com.rose.taskassignmenttest.viewmodels.idaos.room.TaskAppDatabase
 
@@ -22,6 +29,9 @@ open class BaseActivity(@StringRes private val mTitleRes: Int): AppCompatActivit
         toolbar.setNavigationOnClickListener { finish() }
     }
 
-    protected fun provideRoomTaskDao(): RoomTaskDao =
-        TaskAppDatabase.getInstance(applicationContext).taskDao()
+    protected fun provideUserDao(): UserDao = UserDaoFactory.newUserDao()
+
+    protected fun provideTaskDao(): TaskDao = TaskDaoFactory.newTaskDao(this)
+
+    protected fun provideLogoutDao(): LogoutDao = LogoutDaoFactory.newLogoutDao(this)
 }

@@ -74,25 +74,35 @@ class TaskListFragment : Fragment(), TaskListListener {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_task_list, container, false)
 
-        mRecyclerView = root.findViewById(R.id.list)
-        mEmptyText = root.findViewById(R.id.empty_text)
+        initViewElements(root)
 
-        activity?.let {
-            mListAdapter = ListAdapter(it, this)
-            mRecyclerView.layoutManager = LinearLayoutManager(it)
-            mRecyclerView.adapter = mListAdapter
-            mListViewModel = ViewModelProvider(it).get(ListViewModel::class.java)
-            mListViewModel.loadAllTasks()
-            mListViewModel.getAllTasks().observe(it) { tasks -> updateTasks(tasks) }
-            LocalBroadcastManager.getInstance(it).registerReceiver(
-                mTaskListBroadcastReceiver,
-                IntentFilter(ActionConstants.SYNC_DONE_ACTION)
-            )
-        }
+        initViewModel()
+
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
+            mTaskListBroadcastReceiver,
+            IntentFilter(ActionConstants.SYNC_DONE_ACTION)
+        )
 
         setHasOptionsMenu(true)
 
         return root
+    }
+
+    private fun initViewElements(root: View) {
+        mRecyclerView = root.findViewById(R.id.list)
+        mEmptyText = root.findViewById(R.id.empty_text)
+
+        mListAdapter = ListAdapter(requireContext(), this)
+        mRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        mRecyclerView.adapter = mListAdapter
+    }
+
+    private fun initViewModel() {
+        activity?.let {
+            mListViewModel = ViewModelProvider(it).get(ListViewModel::class.java)
+            mListViewModel.loadAllTasks()
+            mListViewModel.getAllTasks().observe(it) { tasks -> updateTasks(tasks) }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
