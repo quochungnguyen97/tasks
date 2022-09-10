@@ -51,4 +51,6 @@
     <string name="password_not_match">2 passwords not match</string>
     <string name="password_empty">Password should not be empty!</string>
     <string name="register_success">Register success</string>
+    <string name="server_timeout">server timeout!</string>
+    <string name="connection_failed">Connection failed</string>
 </resources>

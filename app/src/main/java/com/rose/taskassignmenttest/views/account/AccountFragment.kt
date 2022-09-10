@@ -16,6 +16,7 @@ import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.utils.StringUtils
 import com.rose.taskassignmenttest.viewmodels.AccountViewModel
+import com.rose.taskassignmenttest.viewmodels.FailResult
 
 class AccountFragment : Fragment() {
 
@@ -67,10 +68,20 @@ class AccountFragment : Fragment() {
             }
         }
 
-        mViewModel.getFetchDataFailed().observe(act) { isFetchDataFailed ->
-            if (isFetchDataFailed) {
-                Toast.makeText(act, R.string.user_token_expired, Toast.LENGTH_SHORT).show()
+        mViewModel.getFetchDataFailed().observe(act) { failResult -> onFetchDataFailed(failResult) }
+    }
+
+    private fun onFetchDataFailed(failResult: FailResult) {
+        when (failResult) {
+            FailResult.WRONG_DATA -> {
+                Toast.makeText(requireActivity(), R.string.user_token_expired, Toast.LENGTH_SHORT).show()
                 onLogout()
+            }
+            FailResult.SERVER_TIMEOUT -> {
+                Toast.makeText(requireActivity(), R.string.server_timeout, Toast.LENGTH_SHORT).show()
+            }
+            FailResult.CONNECTION_FAILED -> {
+                Toast.makeText(requireActivity(), R.string.connection_failed, Toast.LENGTH_SHORT).show()
             }
         }
     }

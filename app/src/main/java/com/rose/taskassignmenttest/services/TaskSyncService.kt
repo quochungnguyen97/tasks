@@ -30,6 +30,9 @@ class TaskSyncService : Service() {
     private var mRoomTaskDao: SyncRoomTaskDao? = null
 
     private val mCoroutineScope = CoroutineScope(Dispatchers.Main)
+    private val mExceptionHandler = CoroutineExceptionHandler { _, e ->
+        onExceptionThrown(e)
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -37,7 +40,7 @@ class TaskSyncService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        mCoroutineScope.launch {
+        mCoroutineScope.launch(mExceptionHandler) {
             PreferenceUtils.setPreference(
                 applicationContext,
                 PreferenceConstants.PREF_KEY_IS_SYNCING,
@@ -102,26 +105,19 @@ class TaskSyncService : Service() {
                 TaskSchema.fromTask(task)
             }
 
-            try {
-                val response = mTaskRetrofitService.requestSync(
-                    PreferenceUtils.getAccountToken(applicationContext),
-                    requestTasksSchema
-                )
-                val responseTasks = response.body()
+            val response = mTaskRetrofitService.requestSync(
+                PreferenceUtils.getAccountToken(applicationContext),
+                requestTasksSchema
+            )
+            val responseTasks = response.body()
 
-                if (response.code() == 200 && responseTasks != null) {
-                    logTasks(responseTasks)
-                    updatedTasks.addAll(responseTasks.map { taskSchema -> taskSchema.toTask() }
-                        .map { task -> task.copy(id = uuidMapForId[task.serverId] ?: 0) })
-                }
-
-                return@withContext updatedTasks
-            } catch (e: ConnectException) {
-                Log.e(TAG, "requestSyncTasks: ", e)
-            } catch (e: SocketTimeoutException) {
-                Log.e(TAG, "requestSyncTasks: timeout", e)
+            if (response.code() == 200 && responseTasks != null) {
+                logTasks(responseTasks)
+                updatedTasks.addAll(responseTasks.map { taskSchema -> taskSchema.toTask() }
+                    .map { task -> task.copy(id = uuidMapForId[task.serverId] ?: 0) })
             }
-            return@withContext ArrayList()
+
+            return@withContext updatedTasks
         }
 
     private suspend fun saveTasksToDb(tasks: List<Task>): Boolean = withContext(Dispatchers.IO) {
@@ -132,6 +128,20 @@ class TaskSyncService : Service() {
             return@withContext true
         } ?: run {
             return@withContext false
+        }
+    }
+
+    private fun onExceptionThrown(e: Throwable) {
+        Log.e(TAG, "onExceptionThrown: ", e)
+        when (e) {
+            is SocketTimeoutException -> {
+                Toast.makeText(applicationContext, R.string.server_timeout, Toast.LENGTH_SHORT)
+                    .show()
+            }
+            is ConnectException -> {
+                Toast.makeText(applicationContext, R.string.connection_failed, Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
     }
 
