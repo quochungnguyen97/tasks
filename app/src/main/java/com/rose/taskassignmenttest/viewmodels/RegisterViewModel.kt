@@ -3,6 +3,7 @@ package com.rose.taskassignmenttest.viewmodels
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.rose.taskassignmenttest.data.User
 import com.rose.taskassignmenttest.utils.StringUtils
 import com.rose.taskassignmenttest.viewmodels.daos.UserDao
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -25,9 +26,9 @@ class RegisterViewModel: BaseViewModel() {
 
     fun getRegisterResult(): LiveData<String> = mRegisterResult
 
-    fun register(username: String, password: String) {
+    fun register(user: User) {
         mCoroutineScope.launch(mExceptionHandler) {
-            mRegisterResult.value = mUserDao.register(username, password)
+            mRegisterResult.value = mUserDao.register(user)
         }
     }
 

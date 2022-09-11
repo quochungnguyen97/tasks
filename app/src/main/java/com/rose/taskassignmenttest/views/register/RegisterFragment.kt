@@ -13,12 +13,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.constants.ExtraConstants
+import com.rose.taskassignmenttest.data.User
 import com.rose.taskassignmenttest.utils.StringUtils
 import com.rose.taskassignmenttest.viewmodels.RegisterViewModel
 
 class RegisterFragment : Fragment() {
 
     private lateinit var mUsernameTv: TextView
+    private lateinit var mDisplayNameTv: TextView
     private lateinit var mPasswordTv: TextView
     private lateinit var mConfirmPasswordTv: TextView
     private lateinit var mRegisterBtn: Button
@@ -42,6 +44,7 @@ class RegisterFragment : Fragment() {
         mUsernameTv = rootView.findViewById(R.id.register_username)
         mPasswordTv = rootView.findViewById(R.id.register_password)
         mConfirmPasswordTv = rootView.findViewById(R.id.register_confirm_password)
+        mDisplayNameTv = rootView.findViewById(R.id.register_display_name)
 
         mRegisterBtn = rootView.findViewById(R.id.register_btn)
         mRegisterBtn.setOnClickListener { onSubmit() }
@@ -64,6 +67,12 @@ class RegisterFragment : Fragment() {
             return
         }
 
+        val displayName = mDisplayNameTv.text.toString()
+        if (StringUtils.isEmptyOrBlank(displayName)) {
+            Toast.makeText(requireContext(), R.string.display_name_empty, Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val password = mPasswordTv.text.toString()
         val confirmPassword = mConfirmPasswordTv.text.toString()
 
@@ -76,7 +85,7 @@ class RegisterFragment : Fragment() {
             return
         }
 
-        mViewModel.register(username, password)
+        mViewModel.register(User(username, password, displayName))
     }
 
     private fun onRegisterResult(isSuccess: Boolean) {

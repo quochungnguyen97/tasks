@@ -12,9 +12,9 @@ import kotlinx.coroutines.withContext
 class RetrofitUserDao : UserDao {
     private val mUserService = RetrofitFactory.userService()
 
-    override suspend fun register(username: String, password: String): String =
+    override suspend fun register(user: User): String =
         withContext(Dispatchers.IO) {
-            val response = mUserService.register(UserSchema(username, password))
+            val response = mUserService.register(UserSchema.fromUser(user))
             if (response.code() == 200) {
                 response.headers()[RetrofitConstants.USER_TOKEN_NAME]?.let {
                     return@withContext it

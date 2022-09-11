@@ -53,4 +53,6 @@
     <string name="register_success">Register success</string>
     <string name="server_timeout">server timeout!</string>
     <string name="connection_failed">Connection failed</string>
+    <string name="display_name">Display name</string>
+    <string name="display_name_empty">Display name should not be empty!</string>
 </resources>
