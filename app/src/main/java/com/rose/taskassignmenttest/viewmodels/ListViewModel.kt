@@ -9,18 +9,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ListViewModel : BaseViewModel() {
+class ListViewModel(private val mTaskDao: TaskDao) : BaseViewModel() {
     companion object {
         private const val TAG = "ListViewModel"
     }
 
-    private lateinit var mTaskDao: TaskDao
+    init {
+        loadAllTasks()
+    }
 
     private val mAllTasks = MutableLiveData<MutableList<Task>>()
-
-    fun setTaskDao(taskDao: TaskDao) {
-        mTaskDao = taskDao
-    }
 
     fun getAllTasks(): LiveData<MutableList<Task>> {
         return mAllTasks

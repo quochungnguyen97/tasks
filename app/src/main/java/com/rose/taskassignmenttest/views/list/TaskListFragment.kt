@@ -17,15 +17,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.constants.ActionConstants
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.viewmodels.ListViewModel
 import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.constants.PreferenceConstants
+import com.rose.taskassignmenttest.daos.TaskDaoImpl
 import com.rose.taskassignmenttest.services.TaskSyncService
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.utils.StringUtils
+import com.rose.taskassignmenttest.viewmodels.ViewModelFactory
 import com.rose.taskassignmenttest.views.account.AccountActivity
 import com.rose.taskassignmenttest.views.detail.DetailActivity
 import com.rose.taskassignmenttest.views.list.items.ItemsSorter
@@ -95,13 +98,26 @@ class TaskListFragment : Fragment(), TaskListListener {
         mListAdapter = ListAdapter(requireContext(), this)
         mRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         mRecyclerView.adapter = mListAdapter
+
+        val addBtn: FloatingActionButton = root.findViewById(R.id.list_add_btn)
+        addBtn.setOnClickListener {
+            mStartActivityForResult.launch(
+                Intent(
+                    requireContext(),
+                    DetailActivity::class.java
+                ).apply {
+                    putExtra(ExtraConstants.EXTRA_TASK_ID, -1)
+                })
+        }
     }
 
     private fun initViewModel() {
-        activity?.let {
-            mListViewModel = ViewModelProvider(it).get(ListViewModel::class.java)
-            mListViewModel.loadAllTasks()
-            mListViewModel.getAllTasks().observe(it) { tasks -> updateTasks(tasks) }
+        activity?.let { act ->
+            mListViewModel =
+                ViewModelProvider(act, ViewModelFactory(TaskDaoImpl(act.applicationContext))).get(
+                    ListViewModel::class.java
+                )
+            mListViewModel.getAllTasks().observe(act) { tasks -> updateTasks(tasks) }
         }
     }
 
@@ -238,19 +254,21 @@ class TaskListFragment : Fragment(), TaskListListener {
     }
 
     private fun updateTasks(tasks: MutableList<Task>) {
-        mCoroutineScope.launch {
-            withContext(Dispatchers.IO) {
-                mListAdapter.updateItems(
-                    ItemsSorter.getGroupSortItemsList(
-                        tasks,
-                        ItemsSorter.GROUP_BY_STATUS,
-                        requireContext()
+        context?.let { ctx ->
+            mCoroutineScope.launch {
+                withContext(Dispatchers.IO) {
+                    mListAdapter.updateItems(
+                        ItemsSorter.getGroupSortItemsList(
+                            tasks,
+                            ItemsSorter.GROUP_BY_STATUS,
+                            ctx
+                        )
                     )
-                )
+                }
+                mListAdapter.notifyDataSetChanged()
             }
-            mListAdapter.notifyDataSetChanged()
+            mEmptyText.isVisible = tasks.isEmpty()
         }
-        mEmptyText.isVisible = tasks.isEmpty()
     }
 
     override fun onClick(itemId: Int) {
