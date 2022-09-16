@@ -3,9 +3,9 @@ package com.rose.taskassignmenttest.injections.viewmodel
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.viewmodels.*
-import com.rose.taskassignmenttest.viewmodels.daos.LogoutDao
-import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
-import com.rose.taskassignmenttest.viewmodels.daos.UserDao
+import com.rose.taskassignmenttest.viewmodels.models.LogoutModel
+import com.rose.taskassignmenttest.viewmodels.models.TaskModel
+import com.rose.taskassignmenttest.viewmodels.models.UserModel
 import dagger.Module
 import dagger.Provides
 
@@ -15,10 +15,10 @@ object ViewModelModule {
     @ViewModelScope
     @Provides
     fun viewModelFactory(
-        userDao: UserDao,
-        taskDao: TaskDao,
-        logoutDao: LogoutDao
-    ): ViewModelFactory = ViewModelFactory(userDao, taskDao, logoutDao)
+        userModel: UserModel,
+        taskModel: TaskModel,
+        logoutModel: LogoutModel
+    ): ViewModelFactory = ViewModelFactory(userModel, taskModel, logoutModel)
 
     @Provides
     fun listViewModel(

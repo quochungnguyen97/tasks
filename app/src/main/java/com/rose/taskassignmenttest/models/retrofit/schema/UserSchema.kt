@@ -1,4 +1,4 @@
-package com.rose.taskassignmenttest.daos.retrofit.schema
+package com.rose.taskassignmenttest.models.retrofit.schema
 
 import com.rose.taskassignmenttest.data.User
 import com.rose.taskassignmenttest.utils.StringUtils

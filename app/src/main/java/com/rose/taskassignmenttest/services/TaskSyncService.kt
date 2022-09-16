@@ -11,19 +11,17 @@ import com.rose.taskassignmenttest.constants.ActionConstants
 import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.constants.PreferenceConstants
 import com.rose.taskassignmenttest.data.Task
+import com.rose.taskassignmenttest.models.retrofit.RetrofitFactory
+import com.rose.taskassignmenttest.models.retrofit.schema.TaskSchema
+import com.rose.taskassignmenttest.models.room.RoomTaskData
+import com.rose.taskassignmenttest.models.room.SyncRoomTaskDao
+import com.rose.taskassignmenttest.models.room.TaskAppDatabase
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.utils.StringUtils
-import com.rose.taskassignmenttest.daos.retrofit.RetrofitFactory
-import com.rose.taskassignmenttest.daos.retrofit.schema.TaskSchema
-import com.rose.taskassignmenttest.daos.room.RoomTaskData
-import com.rose.taskassignmenttest.daos.room.SyncRoomTaskDao
-import com.rose.taskassignmenttest.daos.room.TaskAppDatabase
 import kotlinx.coroutines.*
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class TaskSyncService : Service() {
     private val mTaskRetrofitService = RetrofitFactory.taskService()

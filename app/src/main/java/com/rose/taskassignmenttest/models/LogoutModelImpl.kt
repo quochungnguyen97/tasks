@@ -1,13 +1,13 @@
-package com.rose.taskassignmenttest.daos
+package com.rose.taskassignmenttest.models
 
-import com.rose.taskassignmenttest.viewmodels.daos.LogoutDao
-import com.rose.taskassignmenttest.daos.room.RoomTaskDao
+import com.rose.taskassignmenttest.viewmodels.models.LogoutModel
+import com.rose.taskassignmenttest.models.room.RoomTaskDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class LogoutDaoImpl(
+class LogoutModelImpl(
     private val mTaskDao: RoomTaskDao,
-) : LogoutDao {
+) : LogoutModel {
     override suspend fun logout(): Boolean = withContext(Dispatchers.IO) {
         mTaskDao.clearServerIds()
         return@withContext true

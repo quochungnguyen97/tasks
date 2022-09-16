@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.utils.StringUtils
-import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
+import com.rose.taskassignmenttest.viewmodels.models.TaskModel
 import kotlinx.coroutines.launch
 
-class DetailViewModel(private val mTaskDao: TaskDao) : BaseViewModel() {
+class DetailViewModel(private val mTaskModel: TaskModel) : BaseViewModel() {
     private val mTask = MutableLiveData<Task>()
     private val mDynamicData = MutableLiveData<DynamicData>()
 
@@ -45,7 +45,7 @@ class DetailViewModel(private val mTaskDao: TaskDao) : BaseViewModel() {
 
     fun setTaskId(taskId: Int) {
         mCoroutineScope.launch {
-            mTaskDao.getTask(taskId)?.let { task ->
+            mTaskModel.getTask(taskId)?.let { task ->
                 mTask.value = task
                 mDynamicData.value = DynamicData(task.title, task.completed)
             }
@@ -55,7 +55,7 @@ class DetailViewModel(private val mTaskDao: TaskDao) : BaseViewModel() {
     fun checkDataChanged(title: String, checked: Boolean) {
         mTask.value?.let { task ->
             mCoroutineScope.launch {
-                mTaskDao.getTask(task.id)?.let { loadedTask ->
+                mTaskModel.getTask(task.id)?.let { loadedTask ->
                     val isDataNotChanged = checked == loadedTask.completed &&
                             task.deadLine == loadedTask.deadLine &&
                             task.createdTime == loadedTask.createdTime &&
@@ -76,7 +76,7 @@ class DetailViewModel(private val mTaskDao: TaskDao) : BaseViewModel() {
             if (it.title.isNotEmpty()) {
                 mCoroutineScope.launch {
                     mIsSaveSuccess.value = if (it.id != -1) {
-                        mTaskDao.updateTask(
+                        mTaskModel.updateTask(
                             it.copy(
                                 title = title,
                                 completed = checked,
@@ -85,7 +85,7 @@ class DetailViewModel(private val mTaskDao: TaskDao) : BaseViewModel() {
                         )
                     } else {
                         val currentTime = System.currentTimeMillis()
-                        mTaskDao.insertTask(
+                        mTaskModel.insertTask(
                             it.copy(
                                 title = title,
                                 completed = checked,

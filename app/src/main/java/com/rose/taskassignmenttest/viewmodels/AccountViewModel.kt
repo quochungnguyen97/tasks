@@ -4,16 +4,16 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.rose.taskassignmenttest.data.User
-import com.rose.taskassignmenttest.viewmodels.daos.LogoutDao
-import com.rose.taskassignmenttest.viewmodels.daos.UserDao
+import com.rose.taskassignmenttest.viewmodels.models.LogoutModel
+import com.rose.taskassignmenttest.viewmodels.models.UserModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 
 class AccountViewModel(
-    private val mUserDao: UserDao,
-    private val mLogoutDao: LogoutDao
+    private val mUserModel: UserModel,
+    private val mLogoutModel: LogoutModel
 ) : BaseViewModel() {
     private val mUser: MutableLiveData<User> = MutableLiveData()
     private val mLogoutStatus: MutableLiveData<Boolean> = MutableLiveData()
@@ -28,10 +28,10 @@ class AccountViewModel(
     fun fetchUserInfo(userToken: String) {
         if (mUser.value == null) {
             mCoroutineScope.launch(mExceptionHandler) {
-                mUserDao.fetchUserInfo(userToken)?.let { user ->
+                mUserModel.fetchUserInfo(userToken)?.let { user ->
                     mUser.value = user
                 } ?: run {
-                    if (mLogoutDao.logout()) {
+                    if (mLogoutModel.logout()) {
                         mFetchDataFailed.value = FailResult.WRONG_DATA
                     }
                 }
@@ -41,7 +41,7 @@ class AccountViewModel(
 
     fun logout() {
         mCoroutineScope.launch {
-            mLogoutStatus.value = mLogoutDao.logout()
+            mLogoutStatus.value = mLogoutModel.logout()
         }
     }
 

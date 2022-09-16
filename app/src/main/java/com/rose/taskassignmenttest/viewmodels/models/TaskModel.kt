@@ -1,8 +1,8 @@
-package com.rose.taskassignmenttest.viewmodels.daos
+package com.rose.taskassignmenttest.viewmodels.models
 
 import com.rose.taskassignmenttest.data.Task
 
-interface TaskDao {
+interface TaskModel {
     suspend fun getAllTasks(): MutableList<Task>?
     suspend fun getTask(taskId: Int): Task?
     suspend fun updateTask(task: Task): Boolean

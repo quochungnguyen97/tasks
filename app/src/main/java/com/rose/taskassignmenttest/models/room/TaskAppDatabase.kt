@@ -1,4 +1,4 @@
-package com.rose.taskassignmenttest.daos.room
+package com.rose.taskassignmenttest.models.room
 
 import android.content.Context
 import androidx.room.Database

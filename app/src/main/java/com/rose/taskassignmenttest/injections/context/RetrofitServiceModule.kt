@@ -2,8 +2,8 @@ package com.rose.taskassignmenttest.injections.context
 
 import com.google.gson.GsonBuilder
 import com.rose.taskassignmenttest.constants.RetrofitConstants
-import com.rose.taskassignmenttest.daos.retrofit.TaskRetrofitService
-import com.rose.taskassignmenttest.daos.retrofit.UserRetrofitService
+import com.rose.taskassignmenttest.models.retrofit.TaskRetrofitService
+import com.rose.taskassignmenttest.models.retrofit.UserRetrofitService
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit

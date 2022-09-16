@@ -4,12 +4,12 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.rose.taskassignmenttest.data.Task
-import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
+import com.rose.taskassignmenttest.viewmodels.models.TaskModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ListViewModel(private val mTaskDao: TaskDao) : BaseViewModel() {
+class ListViewModel(private val mTaskModel: TaskModel) : BaseViewModel() {
     companion object {
         private const val TAG = "ListViewModel"
     }
@@ -28,7 +28,7 @@ class ListViewModel(private val mTaskDao: TaskDao) : BaseViewModel() {
         mCoroutineScope.launch {
             withContext(Dispatchers.IO) {
                 mAllTasks.value?.first { t -> t.id == taskId }.let {
-                    val isDeleted = mTaskDao.deleteTask(taskId)
+                    val isDeleted = mTaskModel.deleteTask(taskId)
                     if (isDeleted) {
                         loadAllTasks()
                     }
@@ -44,7 +44,7 @@ class ListViewModel(private val mTaskDao: TaskDao) : BaseViewModel() {
                 mAllTasks.value?.let { list ->
                     list.first { t -> t.id == taskId }.let { task ->
                         if (task.completed != checked) {
-                            val isUpdated = mTaskDao.updateTask(
+                            val isUpdated = mTaskModel.updateTask(
                                 task.copy(
                                     completed = checked,
                                     modifiedTime = System.currentTimeMillis()
@@ -62,7 +62,7 @@ class ListViewModel(private val mTaskDao: TaskDao) : BaseViewModel() {
 
     fun loadAllTasks() {
         mCoroutineScope.launch {
-            mAllTasks.value = mTaskDao.getAllTasks()
+            mAllTasks.value = mTaskModel.getAllTasks()
         }
     }
 }

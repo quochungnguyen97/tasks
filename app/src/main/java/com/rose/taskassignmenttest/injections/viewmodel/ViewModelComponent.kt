@@ -10,7 +10,7 @@ import dagger.Subcomponent
 
 
 @ViewModelScope
-@Subcomponent(modules = [ViewModelModule::class, DaoModule::class])
+@Subcomponent(modules = [ViewModelModule::class, ModelModule::class])
 interface ViewModelComponent {
     fun inject(taskListFragment: TaskListFragment)
     fun inject(loginFragment: LoginFragment)

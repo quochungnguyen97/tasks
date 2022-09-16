@@ -5,13 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.rose.taskassignmenttest.data.User
 import com.rose.taskassignmenttest.utils.StringUtils
-import com.rose.taskassignmenttest.viewmodels.daos.UserDao
+import com.rose.taskassignmenttest.viewmodels.models.UserModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 
-class RegisterViewModel(private val mUserDao: UserDao): BaseViewModel() {
+class RegisterViewModel(private val mUserModel: UserModel): BaseViewModel() {
     private val mRegisterResult: MutableLiveData<String> = MutableLiveData()
     private val mIsUpdating: MutableLiveData<Boolean> = MutableLiveData()
     private val mRegisterStuffs: MutableLiveData<RegisterStuffs> = MutableLiveData()
@@ -32,7 +32,7 @@ class RegisterViewModel(private val mUserDao: UserDao): BaseViewModel() {
     fun register(user: User) {
         mCoroutineScope.launch(mExceptionHandler) {
             mIsUpdating.value = true
-            mRegisterResult.value = mUserDao.register(user)
+            mRegisterResult.value = mUserModel.register(user)
             mIsUpdating.value = false
         }
     }

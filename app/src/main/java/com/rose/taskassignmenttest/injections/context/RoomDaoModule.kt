@@ -1,9 +1,9 @@
 package com.rose.taskassignmenttest.injections.context
 
 import android.content.Context
-import com.rose.taskassignmenttest.daos.room.RoomTaskDao
-import com.rose.taskassignmenttest.daos.room.SyncRoomTaskDao
-import com.rose.taskassignmenttest.daos.room.TaskAppDatabase
+import com.rose.taskassignmenttest.models.room.RoomTaskDao
+import com.rose.taskassignmenttest.models.room.SyncRoomTaskDao
+import com.rose.taskassignmenttest.models.room.TaskAppDatabase
 import dagger.Module
 import dagger.Provides
 

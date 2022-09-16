@@ -1,7 +1,7 @@
-package com.rose.taskassignmenttest.daos.retrofit
+package com.rose.taskassignmenttest.models.retrofit
 
 import com.rose.taskassignmenttest.constants.RetrofitConstants
-import com.rose.taskassignmenttest.daos.retrofit.schema.UserSchema
+import com.rose.taskassignmenttest.models.retrofit.schema.UserSchema
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
