@@ -11,35 +11,29 @@ import kotlinx.coroutines.launch
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 
-class AccountViewModel: BaseViewModel() {
+class AccountViewModel(
+    private val mUserDao: UserDao,
+    private val mLogoutDao: LogoutDao
+) : BaseViewModel() {
     private val mUser: MutableLiveData<User> = MutableLiveData()
     private val mLogoutStatus: MutableLiveData<Boolean> = MutableLiveData()
     private val mFetchDataFailed: MutableLiveData<FailResult> = MutableLiveData()
 
-    private lateinit var mUserDao: UserDao
-    private lateinit var mLogoutDao: LogoutDao
-
     private val mExceptionHandler = CoroutineExceptionHandler { _, e -> handleException(e) }
-
-    fun setUserDao(userDao: UserDao) {
-        mUserDao = userDao
-    }
-
-    fun setLogoutDao(logoutDao: LogoutDao) {
-        mLogoutDao = logoutDao
-    }
 
     fun getUser(): LiveData<User> = mUser
     fun getLogoutStatus(): LiveData<Boolean> = mLogoutStatus
     fun getFetchDataFailed(): LiveData<FailResult> = mFetchDataFailed
 
     fun fetchUserInfo(userToken: String) {
-        mCoroutineScope.launch(mExceptionHandler) {
-            mUserDao.fetchUserInfo(userToken)?.let { user ->
-                mUser.value = user
-            } ?: run {
-                if (mLogoutDao.logout()) {
-                    mFetchDataFailed.value = FailResult.WRONG_DATA
+        if (mUser.value == null) {
+            mCoroutineScope.launch(mExceptionHandler) {
+                mUserDao.fetchUserInfo(userToken)?.let { user ->
+                    mUser.value = user
+                } ?: run {
+                    if (mLogoutDao.logout()) {
+                        mFetchDataFailed.value = FailResult.WRONG_DATA
+                    }
                 }
             }
         }

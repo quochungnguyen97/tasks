@@ -1,7 +1,7 @@
 package com.rose.taskassignmenttest.daos
 
 import com.rose.taskassignmenttest.constants.RetrofitConstants
-import com.rose.taskassignmenttest.daos.retrofit.RetrofitFactory
+import com.rose.taskassignmenttest.daos.retrofit.UserRetrofitService
 import com.rose.taskassignmenttest.data.User
 import com.rose.taskassignmenttest.utils.StringUtils
 import com.rose.taskassignmenttest.viewmodels.daos.UserDao
@@ -9,8 +9,7 @@ import com.rose.taskassignmenttest.daos.retrofit.schema.UserSchema
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class RetrofitUserDao : UserDao {
-    private val mUserService = RetrofitFactory.userService()
+class UserDaoImpl(private val mUserService: UserRetrofitService) : UserDao {
 
     override suspend fun register(user: User): String =
         withContext(Dispatchers.IO) {

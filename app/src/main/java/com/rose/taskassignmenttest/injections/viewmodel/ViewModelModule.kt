@@ -1,0 +1,52 @@
+package com.rose.taskassignmenttest.injections.viewmodel
+
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
+import com.rose.taskassignmenttest.viewmodels.*
+import com.rose.taskassignmenttest.viewmodels.daos.LogoutDao
+import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
+import com.rose.taskassignmenttest.viewmodels.daos.UserDao
+import dagger.Module
+import dagger.Provides
+
+@Module
+object ViewModelModule {
+
+    @ViewModelScope
+    @Provides
+    fun viewModelFactory(
+        userDao: UserDao,
+        taskDao: TaskDao,
+        logoutDao: LogoutDao
+    ): ViewModelFactory = ViewModelFactory(userDao, taskDao, logoutDao)
+
+    @Provides
+    fun listViewModel(
+        viewModelFactory: ViewModelFactory,
+        activity: FragmentActivity
+    ): ListViewModel = ViewModelProvider(activity, viewModelFactory)[ListViewModel::class.java]
+
+    @Provides
+    fun loginViewModel(
+        viewModelFactory: ViewModelFactory,
+        activity: FragmentActivity
+    ): LoginViewModel = ViewModelProvider(activity, viewModelFactory)[LoginViewModel::class.java]
+
+    @Provides
+    fun registerViewModel(
+        viewModelFactory: ViewModelFactory,
+        activity: FragmentActivity
+    ): RegisterViewModel = ViewModelProvider(activity, viewModelFactory)[RegisterViewModel::class.java]
+
+    @Provides
+    fun accountViewModel(
+        viewModelFactory: ViewModelFactory,
+        activity: FragmentActivity
+    ): AccountViewModel = ViewModelProvider(activity, viewModelFactory)[AccountViewModel::class.java]
+
+    @Provides
+    fun detailViewModel(
+        viewModelFactory: ViewModelFactory,
+        activity: FragmentActivity
+    ): DetailViewModel = ViewModelProvider(activity, viewModelFactory)[DetailViewModel::class.java]
+}

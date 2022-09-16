@@ -11,25 +11,34 @@ import kotlinx.coroutines.launch
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 
-class RegisterViewModel: BaseViewModel() {
+class RegisterViewModel(private val mUserDao: UserDao): BaseViewModel() {
     private val mRegisterResult: MutableLiveData<String> = MutableLiveData()
+    private val mIsUpdating: MutableLiveData<Boolean> = MutableLiveData()
+    private val mRegisterStuffs: MutableLiveData<RegisterStuffs> = MutableLiveData()
 
-    private lateinit var mUserDao: UserDao
+    init {
+        mIsUpdating.value = false
+        mRegisterStuffs.value = RegisterStuffs()
+    }
 
     private val mExceptionHandler = CoroutineExceptionHandler { _, e ->
         onExceptionThrown(e)
     }
 
-    fun setUserDao(userDao: UserDao) {
-        mUserDao = userDao
-    }
-
     fun getRegisterResult(): LiveData<String> = mRegisterResult
+    fun getIsUpdating(): LiveData<Boolean> = mIsUpdating
+    fun getRegisterStuffs(): LiveData<RegisterStuffs> = mRegisterStuffs
 
     fun register(user: User) {
         mCoroutineScope.launch(mExceptionHandler) {
+            mIsUpdating.value = true
             mRegisterResult.value = mUserDao.register(user)
+            mIsUpdating.value = false
         }
+    }
+
+    fun updateRegisterStuffs(registerStuffs: RegisterStuffs) {
+        mRegisterStuffs.value = registerStuffs
     }
 
     private fun onExceptionThrown(e: Throwable) {
@@ -42,9 +51,17 @@ class RegisterViewModel: BaseViewModel() {
                 mRegisterResult.value = StringUtils.EMPTY
             }
         }
+        mIsUpdating.value = false
     }
 
     companion object {
         private const val TAG = "RegisterViewModel"
     }
+
+    data class RegisterStuffs(
+        val username: String = StringUtils.EMPTY,
+        val displayName: String = StringUtils.EMPTY,
+        val password: String = StringUtils.EMPTY,
+        val confirmPassword: String = StringUtils.EMPTY
+    )
 }

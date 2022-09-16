@@ -9,15 +9,16 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.data.User
 import com.rose.taskassignmenttest.utils.StringUtils
 import com.rose.taskassignmenttest.viewmodels.RegisterViewModel
+import com.rose.taskassignmenttest.views.common.BaseFragment
+import javax.inject.Inject
 
-class RegisterFragment : Fragment() {
+class RegisterFragment : BaseFragment() {
 
     private lateinit var mUsernameTv: TextView
     private lateinit var mDisplayNameTv: TextView
@@ -25,13 +26,16 @@ class RegisterFragment : Fragment() {
     private lateinit var mConfirmPasswordTv: TextView
     private lateinit var mRegisterBtn: Button
 
-    private lateinit var mViewModel: RegisterViewModel
+    @Inject
+    lateinit var mViewModel: RegisterViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        mInjector.inject(this)
+
         val rootView = inflater.inflate(R.layout.fragment_register, container, false)
 
         initViewElements(rootView)
@@ -52,11 +56,18 @@ class RegisterFragment : Fragment() {
 
     private fun initViewModel() {
         activity?.let { act ->
-            mViewModel = ViewModelProvider(act)[RegisterViewModel::class.java]
             mViewModel.getRegisterResult().observe(act) { userToken ->
                 onRegisterResult(!StringUtils.isEmptyOrBlank(userToken))
             }
-
+            mViewModel.getIsUpdating().observe(act) { isUpdating ->
+                mRegisterBtn.isEnabled = !isUpdating
+            }
+            mViewModel.getRegisterStuffs().observe(act) { registerStuffs ->
+                mUsernameTv.text = registerStuffs.username
+                mDisplayNameTv.text = registerStuffs.displayName
+                mPasswordTv.text = registerStuffs.password
+                mConfirmPasswordTv.text = registerStuffs.confirmPassword
+            }
         }
     }
 
@@ -89,17 +100,29 @@ class RegisterFragment : Fragment() {
     }
 
     private fun onRegisterResult(isSuccess: Boolean) {
-        if (isSuccess) {
-            Toast.makeText(requireContext(), R.string.register_success, Toast.LENGTH_SHORT).show()
-            activity?.let { act ->
+        activity?.let { act ->
+            if (isSuccess) {
+                Toast.makeText(act, R.string.register_success, Toast.LENGTH_SHORT).show()
                 act.setResult(Activity.RESULT_OK, Intent().apply {
                     putExtra(ExtraConstants.EXTRA_REGISTERED_USERNAME, mUsernameTv.text.toString())
                 })
                 act.finish()
+            } else {
+                Toast.makeText(act, R.string.register_failed, Toast.LENGTH_SHORT).show()
             }
-        } else {
-            Toast.makeText(requireContext(), R.string.register_failed, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mViewModel.updateRegisterStuffs(
+            RegisterViewModel.RegisterStuffs(
+                mUsernameTv.text.toString(),
+                mDisplayNameTv.text.toString(),
+                mPasswordTv.text.toString(),
+                mConfirmPasswordTv.text.toString()
+            )
+        )
     }
 
     companion object {

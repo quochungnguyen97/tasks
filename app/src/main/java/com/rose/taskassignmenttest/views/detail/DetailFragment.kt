@@ -9,8 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.widget.PopupMenu
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.data.STATUS_DONE
@@ -21,10 +19,13 @@ import com.rose.taskassignmenttest.utils.StringUtils
 import com.rose.taskassignmenttest.utils.TimeUtils
 import com.rose.taskassignmenttest.utils.ViewUtils
 import com.rose.taskassignmenttest.viewmodels.DetailViewModel
+import com.rose.taskassignmenttest.views.common.BaseFragment
 import com.rose.taskassignmenttest.views.common.StatusTagView
+import javax.inject.Inject
 
-class DetailFragment : Fragment() {
-    private lateinit var mViewModel: DetailViewModel
+class DetailFragment : BaseFragment() {
+    @Inject
+    lateinit var mViewModel: DetailViewModel
 
     private lateinit var mTitleText: EditText
     private lateinit var mCheck: CheckBox
@@ -41,6 +42,8 @@ class DetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        mInjector.inject(this)
+
         val root = inflater.inflate(R.layout.fragment_detail, container, false)
 
         initViewElements(root)
@@ -89,14 +92,12 @@ class DetailFragment : Fragment() {
         }
 
         deadlineContainer.setOnClickListener {
-            updateTitleAndChecked()
             mTitleText.clearFocus()
             ViewUtils.hideInputMethod(requireContext(), root)
             mDeadlineTimeHandler.showDialogs()
         }
 
         statusContainer.setOnClickListener {
-            updateTitleAndChecked()
             mStatusPopupMenu.show()
         }
 
@@ -104,27 +105,27 @@ class DetailFragment : Fragment() {
             if (StringUtils.isEmptyOrBlank(mTitleText.text.toString())) {
                 warnTitleEmpty()
             } else {
-                updateTitleAndChecked()
-                mViewModel.saveTask()
+                mViewModel.saveTask(mTitleText.text.toString(), mCheck.isChecked)
             }
         }
 
         cancelButton.setOnClickListener {
-            updateTitleAndChecked()
-            mViewModel.checkDataChanged()
+            mViewModel.checkDataChanged(mTitleText.text.toString(), mCheck.isChecked)
         }
     }
 
     private fun initViewModel() {
         activity?.let {
-            mViewModel = ViewModelProvider(it)[DetailViewModel::class.java]
             mViewModel.getTask().observe(it) { task -> updateTask(task) }
+            mViewModel.getDynamicDetailData().observe(it) { dynamicData ->
+                mCheck.isChecked = dynamicData.completed
+                mTitleText.setText(dynamicData.title)
+                mTitleText.setSelection(dynamicData.title.length)
+            }
             mViewModel.getIsSaveSuccess().observe(it) { isSaved -> onTaskSaved(isSaved) }
             mViewModel.getIsDataChanged().observe(it) { isDataChanged ->
                 onDataChanged(isDataChanged)
             }
-
-            mViewModel.loadTask()
         }
     }
 
@@ -136,15 +137,8 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun updateTitleAndChecked() {
-        mViewModel.updateTaskData(mTitleText.text.toString(), mCheck.isChecked)
-    }
-
     private fun updateTask(task: Task) {
         context?.let {
-            mTitleText.setText(task.title)
-            mTitleText.setSelection(task.title.length)
-            mCheck.isChecked = task.completed
             mDeadlineText.text = if (task.deadLine == -1L) it.getString(R.string.no_end_date)
             else TimeUtils.getDateTime(task.deadLine)
             mStatusTagView.setStatus(task.status)
@@ -185,7 +179,10 @@ class DetailFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        updateTitleAndChecked()
+        mViewModel.updateDynamicDetailData(
+            mTitleText.text.toString(),
+            mCheck.isChecked
+        )
     }
 
     companion object {

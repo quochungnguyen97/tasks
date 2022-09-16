@@ -9,18 +9,19 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.utils.StringUtils
 import com.rose.taskassignmenttest.viewmodels.AccountViewModel
 import com.rose.taskassignmenttest.viewmodels.FailResult
+import com.rose.taskassignmenttest.views.common.BaseFragment
+import javax.inject.Inject
 
-class AccountFragment : Fragment() {
+class AccountFragment : BaseFragment() {
 
-    private lateinit var mViewModel: AccountViewModel
+    @Inject
+    lateinit var mViewModel: AccountViewModel
 
     private lateinit var mUsernameTxt: TextView
     private lateinit var mDisplayNameTxt: TextView
@@ -30,6 +31,8 @@ class AccountFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        mInjector.inject(this)
+
         val rootView: View = inflater.inflate(R.layout.fragment_account, container, false)
 
         initViewElements(rootView)
@@ -54,7 +57,6 @@ class AccountFragment : Fragment() {
 
     private fun initViewModel() {
         val act = requireActivity()
-        mViewModel = ViewModelProvider(act)[AccountViewModel::class.java]
 
         mViewModel.getUser().observe(act) { user ->
             mUsernameTxt.text = act.getString(R.string.username_pattern, user.username)
@@ -87,13 +89,14 @@ class AccountFragment : Fragment() {
     }
 
     private fun onLogout() {
-        val act = requireActivity()
-        PreferenceUtils.removeAccountToken(act)
-        act.setResult(Activity.RESULT_OK, Intent().apply {
-            putExtra(ExtraConstants.EXTRA_RELOAD_LIST, true)
-            putExtra(ExtraConstants.EXTRA_RELOAD_MENU, true)
-        })
-        act.finish()
+        activity?.let { act ->
+            PreferenceUtils.removeAccountToken(act)
+            act.setResult(Activity.RESULT_OK, Intent().apply {
+                putExtra(ExtraConstants.EXTRA_RELOAD_LIST, true)
+                putExtra(ExtraConstants.EXTRA_RELOAD_MENU, true)
+            })
+            act.finish()
+        }
     }
 
     companion object {

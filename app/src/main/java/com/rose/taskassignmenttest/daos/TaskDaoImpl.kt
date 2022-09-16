@@ -2,18 +2,20 @@ package com.rose.taskassignmenttest.daos
 
 import android.content.Context
 import com.rose.taskassignmenttest.constants.PreferenceConstants
+import com.rose.taskassignmenttest.daos.room.RoomTaskDao
 import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.utils.NotiUtils
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
 import com.rose.taskassignmenttest.daos.room.RoomTaskData
-import com.rose.taskassignmenttest.daos.room.TaskAppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.stream.Collectors
 
-class TaskDaoImpl(private val mContext: Context) : TaskDao {
-    private val mRoomTaskDao = TaskAppDatabase.getInstance(mContext.applicationContext).taskDao()
+class TaskDaoImpl(
+    private val mContext: Context,
+    private val mRoomTaskDao: RoomTaskDao
+) : TaskDao {
 
     override suspend fun getAllTasks(): MutableList<Task> = withContext(Dispatchers.IO) {
         val allTasks: MutableList<Task> = mRoomTaskDao.getAll()

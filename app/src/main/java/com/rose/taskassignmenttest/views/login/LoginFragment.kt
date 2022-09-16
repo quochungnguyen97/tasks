@@ -3,7 +3,6 @@ package com.rose.taskassignmenttest.views.login
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,20 +11,23 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.lifecycle.ViewModelProvider
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.utils.StringUtils
 import com.rose.taskassignmenttest.viewmodels.LoginViewModel
+import com.rose.taskassignmenttest.views.common.BaseFragment
 import com.rose.taskassignmenttest.views.register.RegisterActivity
+import javax.inject.Inject
 
-class LoginFragment : Fragment() {
+class LoginFragment : BaseFragment() {
 
     private lateinit var mUsernameEdt: EditText
     private lateinit var mPasswordEdt: EditText
+    private lateinit var mLoginBtn: Button
 
-    private lateinit var mViewModel: LoginViewModel
+    @Inject
+    lateinit var mViewModel: LoginViewModel
 
     private val mStartActivityForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -36,10 +38,12 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        mInjector.inject(this)
+
         val view = inflater.inflate(R.layout.fragment_login, container, false)
 
         initViewElements(view)
-        initViewModels()
+        initViewModel()
 
         return view
     }
@@ -48,13 +52,16 @@ class LoginFragment : Fragment() {
         mUsernameEdt = rootView.findViewById(R.id.login_username)
         mPasswordEdt = rootView.findViewById(R.id.login_password)
 
-        rootView.findViewById<Button>(R.id.login_btn).setOnClickListener { onSubmit() }
+        mLoginBtn = rootView.findViewById(R.id.login_btn)
+        mLoginBtn.setOnClickListener { onSubmit() }
         rootView.findViewById<Button>(R.id.register_btn).setOnClickListener { openRegisterScreen() }
     }
 
-    private fun initViewModels() {
-        mViewModel = ViewModelProvider(requireActivity())[LoginViewModel::class.java]
+    private fun initViewModel() {
         mViewModel.getLoginResult().observe(requireActivity()) { token -> onLoginResponse(token) }
+        mViewModel.getUsername().observe(requireActivity()) { username -> mUsernameEdt.setText(username) }
+        mViewModel.getPassword().observe(requireActivity()) { password -> mPasswordEdt.setText(password) }
+        mViewModel.getIsUpdating().observe(requireActivity()) { isUpdating -> mLoginBtn.isEnabled = !isUpdating }
     }
 
     private fun onSubmit() {
@@ -105,10 +112,14 @@ class LoginFragment : Fragment() {
             ) ?: StringUtils.EMPTY
 
             if (!StringUtils.isEmptyOrBlank(registeredUsername)) {
-                mUsernameEdt.setText(registeredUsername)
-                mPasswordEdt.setText(StringUtils.EMPTY)
+                mViewModel.updateUsernamePassword(registeredUsername, StringUtils.EMPTY)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mViewModel.updateUsernamePassword(mUsernameEdt.text.toString(), mPasswordEdt.text.toString())
     }
 
     companion object {

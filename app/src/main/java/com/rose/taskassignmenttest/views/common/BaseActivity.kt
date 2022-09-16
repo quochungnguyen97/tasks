@@ -5,14 +5,21 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.rose.taskassignmenttest.R
-import com.rose.taskassignmenttest.viewmodels.daos.LogoutDao
-import com.rose.taskassignmenttest.viewmodels.daos.TaskDao
-import com.rose.taskassignmenttest.viewmodels.daos.UserDao
-import com.rose.taskassignmenttest.daos.LogoutDaoFactory
-import com.rose.taskassignmenttest.daos.TaskDaoFactory
-import com.rose.taskassignmenttest.daos.UserDaoFactory
+import com.rose.taskassignmenttest.injections.context.DaggerActivityComponent
 
 open class BaseActivity(@StringRes private val mTitleRes: Int): AppCompatActivity() {
+    private val mActivityComponent by lazy {
+        DaggerActivityComponent.builder()
+            .activity(this)
+            .build()
+    }
+
+    private val mViewModelComponent by lazy {
+        mActivityComponent.viewModelComponentBuilder().build()
+    }
+
+    protected val mInjector get() = mViewModelComponent
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
@@ -25,10 +32,4 @@ open class BaseActivity(@StringRes private val mTitleRes: Int): AppCompatActivit
         toolbar.setTitle(mTitleRes)
         toolbar.setNavigationOnClickListener { finish() }
     }
-
-    protected fun provideUserDao(): UserDao = UserDaoFactory.newUserDao()
-
-    protected fun provideTaskDao(): TaskDao = TaskDaoFactory.newTaskDao(this)
-
-    protected fun provideLogoutDao(): LogoutDao = LogoutDaoFactory.newLogoutDao(this)
 }

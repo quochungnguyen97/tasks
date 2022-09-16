@@ -7,41 +7,40 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.view.*
-import androidx.fragment.app.Fragment
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.rose.taskassignmenttest.R
 import com.rose.taskassignmenttest.constants.ActionConstants
-import com.rose.taskassignmenttest.data.Task
-import com.rose.taskassignmenttest.viewmodels.ListViewModel
 import com.rose.taskassignmenttest.constants.ExtraConstants
 import com.rose.taskassignmenttest.constants.PreferenceConstants
-import com.rose.taskassignmenttest.daos.TaskDaoImpl
+import com.rose.taskassignmenttest.data.Task
 import com.rose.taskassignmenttest.services.TaskSyncService
 import com.rose.taskassignmenttest.utils.PreferenceUtils
 import com.rose.taskassignmenttest.utils.StringUtils
-import com.rose.taskassignmenttest.viewmodels.ViewModelFactory
+import com.rose.taskassignmenttest.viewmodels.ListViewModel
 import com.rose.taskassignmenttest.views.account.AccountActivity
+import com.rose.taskassignmenttest.views.common.BaseFragment
 import com.rose.taskassignmenttest.views.detail.DetailActivity
 import com.rose.taskassignmenttest.views.list.items.ItemsSorter
 import com.rose.taskassignmenttest.views.login.LoginActivity
 import kotlinx.coroutines.*
+import javax.inject.Inject
 
 
-class TaskListFragment : Fragment(), TaskListListener {
+class TaskListFragment : BaseFragment(), TaskListListener {
     private lateinit var mListAdapter: ListAdapter
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var mEmptyText: TextView
 
-    private lateinit var mListViewModel: ListViewModel
+    @Inject
+    lateinit var mListViewModel: ListViewModel
 
     private val mCoroutineScope = CoroutineScope(Dispatchers.Main)
 
@@ -75,6 +74,8 @@ class TaskListFragment : Fragment(), TaskListListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        mInjector.inject(this)
+
         val root = inflater.inflate(R.layout.fragment_task_list, container, false)
 
         initViewElements(root)
@@ -113,10 +114,6 @@ class TaskListFragment : Fragment(), TaskListListener {
 
     private fun initViewModel() {
         activity?.let { act ->
-            mListViewModel =
-                ViewModelProvider(act, ViewModelFactory(TaskDaoImpl(act.applicationContext))).get(
-                    ListViewModel::class.java
-                )
             mListViewModel.getAllTasks().observe(act) { tasks -> updateTasks(tasks) }
         }
     }
