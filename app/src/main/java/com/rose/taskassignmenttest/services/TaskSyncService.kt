@@ -36,11 +36,7 @@ class TaskSyncService : BaseService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         mCoroutineScope.launch(mExceptionHandler) {
-            PreferenceUtils.setPreference(
-                applicationContext,
-                PreferenceConstants.PREF_KEY_IS_SYNCING,
-                true
-            )
+            updateIsSyncingPreference(true)
 
             val allTasks = mSyncLocalDatabaseModel.getAllTasksFromDb()
             val responseTasksFromServer = mSyncServerModel.requestSyncTasks(
@@ -53,22 +49,10 @@ class TaskSyncService : BaseService() {
                 true
             }
 
-            PreferenceUtils.setPreference(
-                applicationContext,
-                PreferenceConstants.PREF_KEY_IS_SYNCING,
-                false
-            )
+            updateIsSyncingPreference(false)
 
-            val message = if (isResponseTasksSaved) {
-                R.string.sync_success
-            } else {
-                R.string.sync_failed
-            }
-            Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
-
-            val resultIntent = Intent(ActionConstants.SYNC_DONE_ACTION)
-            resultIntent.putExtra(ExtraConstants.SYNC_RESULT, isResponseTasksSaved)
-            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(resultIntent)
+            showSyncResultToast(isResponseTasksSaved)
+            sendSyncDoneIntent(isResponseTasksSaved)
         }
         return START_STICKY
     }
@@ -85,17 +69,36 @@ class TaskSyncService : BaseService() {
                     .show()
             }
         }
+        updateIsSyncingPreference(false)
+    }
+
+    private fun updateIsSyncingPreference(isSyncing: Boolean) {
+        PreferenceUtils.setPreference(
+            this,
+            PreferenceConstants.PREF_KEY_IS_SYNCING,
+            isSyncing
+        )
+    }
+
+    private fun showSyncResultToast(isSyncSuccess: Boolean) {
+        val message = if (isSyncSuccess) {
+            R.string.sync_success
+        } else {
+            R.string.sync_failed
+        }
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun sendSyncDoneIntent(isSyncSuccess: Boolean) {
+        val resultIntent = Intent(ActionConstants.SYNC_DONE_ACTION)
+        resultIntent.putExtra(ExtraConstants.SYNC_RESULT, isSyncSuccess)
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(resultIntent)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.i(TAG, "onDestroy: ")
-
-        PreferenceUtils.setPreference(
-            applicationContext,
-            PreferenceConstants.PREF_KEY_IS_SYNCING,
-            false
-        )
+        updateIsSyncingPreference(false)
         mCoroutineScope.coroutineContext.cancelChildren()
     }
 
